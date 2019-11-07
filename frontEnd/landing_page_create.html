@@ -16,8 +16,36 @@
             <div class="card-body">
               <h5 class="card-title text-center">Broker</h5>
               <form class="form-signin">
-                <button name="room" type="submit" value="join" class="btn btn-lg btn-primary btn-block text-uppercase">Join Room</button>
-                <button name="room" type="submit" value="create" class="btn btn-lg btn-primary btn-block text-uppercase">Create Room</button>
+
+                <div class="form-group">
+                  <input type="email" id="playerName" class="form-control" placeholder="Player Name" required autofocus>
+                </div>
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Game Type</label>
+                  <select class="form-control" id="exampleFormControlSelect1">
+                    <option>BlackJack</option>
+                    <option>Texas Hold'em</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Stack Size</label>
+                  <input type="email" id="playerName" class="form-control" placeholder="Enter number." required autofocus>
+                </div>
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Room Limit</label>
+                  <select class="form-control" id="exampleFormControlSelect1">
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    <option>6</option>
+                    <option>7</option>
+                    <option>8</option>
+                    <option>9</option>
+                    <option>10</option>
+                  </select>
+                </div>
+                <button name="room" type="submit" value="join" class="btn btn-lg btn-primary btn-block text-uppercase">Create Room</button>
               </form>
             </div>
           </div>

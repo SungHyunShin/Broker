@@ -14,11 +14,23 @@
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
           <div class="card card-signin my-5">
             <div class="card-body">
-              <h5 class="card-title text-center">Broker</h5>
-              <form class="form-signin">
-                <button name="room" type="submit" value="join" class="btn btn-lg btn-primary btn-block text-uppercase">Join Room</button>
-                <button name="room" type="submit" value="create" class="btn btn-lg btn-primary btn-block text-uppercase">Create Room</button>
-              </form>
+              <h5 class="card-title text-center">Room #\number </h5>
+              <!-- Add the divs for current members -->
+              <div class="alert alert-secondary" role="alert">
+                Joseph Han
+              </div>
+              <!-- the yellow one to mark the host-->
+              <div class="alert alert-warning" role="alert">
+                Andy Shin
+              </div>
+              <div class="alert alert-secondary" role="alert">
+                Jin Kim
+              </div>
+
+
+              <!-- use something similar below to disable the settings menu and start game button for non host players -->
+              <!-- document.getElementById("myP").style.visibility = "hidden"; -->
+              <button name="room" type="submit" value="start" class="btn btn-lg btn-primary btn-block text-uppercase">Start Game</button>
             </div>
           </div>
         </div>
