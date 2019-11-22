@@ -19,32 +19,61 @@ server.listen(5000, function() {
 
 var games = {};
 var gameC = 0;
+var idToName = {};
 
 // Add the WebSocket handlers
 io.on('connection', function(socket) {
-  socket.on('roomInit', function(){
+  socket.on('roomInit', function(roomInitValues){
+    var playerName = roomInitValues['playerName'];
+    var roomSizeLimit = roomInitValues['roomSizeLimit'];
+    var gameType = roomInitValues['gameType'];
+
     gameC += 1;
-    var game = gameC.toString().padStart(5, "0");
-    console.log(game);
-    socket.emit('gameCode',game);
-    socket.emit('redirectLobbyHost',"");
-    games[game] = ['STANDINHOSTUSERNAME'];
-    socket.join(game);
+    var gameCode = gameC.toString().padStart(5, "0");
+    console.log(gameCode);
+    socket.emit('gameCode',gameCode);
+    games[gameCode] = {};
+    games[gameCode]['gameType'] = gameType;
+    games[gameCode]['roomSizeLimit'] = roomSizeLimit;
+    games[gameCode]['memberList'] = [playerName];
+    idToName[socket.id] = {'playerName':playerName,'gameCode':gameCode};
+    socket.emit('redirectToLobby',games[gameCode]['memberList']);
+    socket.join(gameCode);
   });
   socket.on('roomJoin', function(player){
     var gameCode = player['gameCode'];
     var playerName = player['playerName'];
-    socket.emit('message',games);
-    socket.emit('message',gameCode);
-    socket.emit('message',playerName);
-    if(gameCode in games){
-      socket.emit('message','game exists');
-      socket.join(gameCode);
-      games[gameCode].push(playerName);
-      socket.emit('redirectLobbyUser',"");
+    if(!(gameCode in games)){
+      socket.emit('gameDNE','');
     }
-    else{
-      socket.emit('message','game does not exist');
+    else if(games[gameCode]['memberList'].length>=games[gameCode]['roomSizeLimit']){
+      socket.emit('roomFull','');
+    }
+      else{
+      socket.join(gameCode);
+      games[gameCode]['memberList'].push(playerName);
+      idToName[socket.id] = {'playerName':playerName,'gameCode':gameCode};
+      socket.to(gameCode).emit('newUser',playerName);
+      socket.emit('redirectToLobby',games[gameCode]['memberList']);
+    }
+  });
+  socket.on('disconnect', function(){
+    if(socket.id in idToName){
+      // TODO check if in game and handle logic
+      var playerName = idToName[socket.id]['playerName'];
+      var gameCode = idToName[socket.id]['gameCode'];
+
+      // remove the player
+      games[gameCode]['memberList'].splice(games[gameCode]['memberList'].indexOf(playerName),1);
+
+      // checks for empty game
+      if(games[gameCode]['memberList'].length==0){
+        socket.to(gameCode).disconnect();
+        delete games[gameCode];
+      }
+      else{ // updates other clients
+        socket.to(gameCode).emit('disconnectedPlayer',games[gameCode]['memberList']);
+      }
     }
   });
 });
