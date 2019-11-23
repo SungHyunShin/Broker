@@ -23,10 +23,13 @@ var idToName = {};
 
 // Add the WebSocket handlers
 io.on('connection', function(socket) {
+  console.log(socket.id+" connected")
   socket.on('roomInit', function(roomInitValues){
     var playerName = roomInitValues['playerName'];
     var roomSizeLimit = roomInitValues['roomSizeLimit'];
     var gameType = roomInitValues['gameType'];
+    
+    if(playerName.length>12||playerName.length==0||roomSizeLimit<2||roomSizeLimit>10||!(gameType=='T'||gameType=='B')) return;
 
     gameC += 1;
     var gameCode = gameC.toString().padStart(5, "0");
@@ -36,21 +39,23 @@ io.on('connection', function(socket) {
     games[gameCode]['gameType'] = gameType;
     games[gameCode]['roomSizeLimit'] = roomSizeLimit;
     games[gameCode]['memberList'] = [playerName];
+    games[gameCode]['inGame'] = false;
     idToName[socket.id] = {'playerName':playerName,'gameCode':gameCode};
+    socket.join(gameCode,function(){console.log(playerName+" joined "+gameCode)});
     socket.emit('redirectToLobby',games[gameCode]['memberList']);
-    socket.join(gameCode);
   });
   socket.on('roomJoin', function(player){
     var gameCode = player['gameCode'];
     var playerName = player['playerName'];
+    if(playerName.length>12||playerName.length==0||gameCode.length!=5) return;
     if(!(gameCode in games)){
       socket.emit('gameDNE','');
     }
     else if(games[gameCode]['memberList'].length>=games[gameCode]['roomSizeLimit']){
       socket.emit('roomFull','');
     }
-      else{
-      socket.join(gameCode);
+    else{
+      socket.join(gameCode,function(){console.log(playerName+" joined "+gameCode)});
       games[gameCode]['memberList'].push(playerName);
       idToName[socket.id] = {'playerName':playerName,'gameCode':gameCode};
       socket.to(gameCode).emit('newUser',playerName);
@@ -58,6 +63,7 @@ io.on('connection', function(socket) {
     }
   });
   socket.on('disconnect', function(){
+    console.log(socket.id+" disconnected")
     if(socket.id in idToName){
       // TODO check if in game and handle logic
       var playerName = idToName[socket.id]['playerName'];
@@ -68,7 +74,7 @@ io.on('connection', function(socket) {
 
       // checks for empty game
       if(games[gameCode]['memberList'].length==0){
-        socket.to(gameCode).disconnect();
+        //socket.to(gameCode).disconnect();
         delete games[gameCode];
       }
       else{ // updates other clients
@@ -76,8 +82,47 @@ io.on('connection', function(socket) {
       }
     }
   });
+  socket.on('settingsChange',function(gameSettings){
+    if(socket.id in idToName){
+      var playerName = idToName[socket.id]['playerName'];
+      var gameCode = idToName[socket.id]['gameCode'];
+      if(!(gameCode in games)) return;
+      if(gameSettings['blindSize']>gameSettings['stackSize']){
+         socket.emit('gameSettingsError',"Blind size can't be higher than stack size!");
+         return;
+      }
+      if(games[gameCode]['inGame']==true){
+        socket.emit('gameSettingsError',"You can't change settings in game. How'd you get here?");
+        // TODO ADD BACK IN AFTER GAME REDIRECT WORKS
+        //return;
+      }
+      games[gameCode]['gameSettings'] = gameSettings;
+      socket.emit('redirectToLobby',games[gameCode]['memberList']);
+      socket.to(gameCode).emit('gameStartRedirect',games[gameCode]['memberList']);      
+    }
+  });
+  socket.on('startGame', function(){
+    // TODO add settings checking and processing
+    if(socket.id in idToName){
+      var playerName = idToName[socket.id]['playerName'];
+      var gameCode = idToName[socket.id]['gameCode'];
+      if(playerName != games[gameCode]['memberList'][0]){ return;} // if not the host. idk how anyone would be able to call this without hacking their client.
+      if('inGame' in games[gameCode])
+        if(games[gameCode]['inGame']==true){return;}
+      if(games[gameCode]['memberList'].length<2||games[gameCode]['memberList'].length>10){return};
+      games[gameCode]['inGame'] = true;
+      socket.to(gameCode).emit('gameStartRedirect',games[gameCode]['memberList']);      
+      socket.emit('gameStartRedirect',games[gameCode]['memberList']);
+      console.log('gameStartRedirect')
+    }
+    else{
+      // do nothing
+      console.log("ERROR: "+socket.id+" tried to start a game when it's not in one.");
+    }
+  });
 });
 
+// function to log messages sent to server
 io.on('message', function(data){
   console.log(data);
 });
