@@ -98,7 +98,6 @@ io.on('connection', function(socket) {
       }
       games[gameCode]['gameSettings'] = gameSettings;
       socket.emit('redirectToLobby',games[gameCode]['memberList']);
-      socket.to(gameCode).emit('gameStartRedirect',games[gameCode]['memberList']);      
     }
   });
   socket.on('startGame', function(){
@@ -111,8 +110,7 @@ io.on('connection', function(socket) {
         if(games[gameCode]['inGame']==true){return;}
       if(games[gameCode]['memberList'].length<2||games[gameCode]['memberList'].length>10){return};
       games[gameCode]['inGame'] = true;
-      socket.to(gameCode).emit('gameStartRedirect',games[gameCode]['memberList']);      
-      socket.emit('gameStartRedirect',games[gameCode]['memberList']);
+      io.to(gameCode).emit('gameStartRedirect',games[gameCode]['memberList']);      
       console.log('gameStartRedirect')
     }
     else{
