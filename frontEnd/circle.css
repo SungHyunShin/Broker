@@ -1,0 +1,23 @@
+.grid {
+  display: flex;                       /* establish flex container */
+  flex-wrap: nowrap;                     /* enable flex items to wrap */
+}
+.cell {
+  flex: 0 0 32%;
+  margin-top: auto;
+  margin-top: bottm;
+  border: 3px solid green;
+  height: 150px;
+  background-color: #999;
+}
+.cell:nth-child(3n) {
+  background-color: #F00;
+  margin-right: 10px;
+}
+.cell:nth-child(3n-2) {
+  background-color: #F00;
+  margin-left: 10px;
+}
+.cell:nth-child(5){
+  height: 300px;
+}

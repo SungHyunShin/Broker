@@ -65,7 +65,6 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function(){
     console.log(socket.id+" disconnected")
     if(socket.id in idToName){
-      // TODO check if in game and handle logic
       var playerName = idToName[socket.id]['playerName'];
       var gameCode = idToName[socket.id]['gameCode'];
 
@@ -78,7 +77,13 @@ io.on('connection', function(socket) {
         delete games[gameCode];
       }
       else{ // updates other clients
-        socket.to(gameCode).emit('disconnectedPlayer',games[gameCode]['memberList']);
+	if(games[gameCode]['inGame']==false){
+          io.to(gameCode).emit('disconnectedPlayer',games[gameCode]['memberList']);
+	}
+        // TODO check if in game and handle logic
+	else{
+	  io.to(gameCode).emit('disconnectedPlayerGame',games[gameCode]['memberList']);
+	}
       }
     }
   });

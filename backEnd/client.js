@@ -15,6 +15,25 @@ socket.on('redirectToLobby',function(memberList){
 socket.on('gameStartRedirect',function(memberList){
   console.log('gameStartRedirect');
   // TODO: send to game lobby screen function
+  document.getElementById("mainDiv").innerHTML = `
+    <div class="container fixed-bottom">
+        <div class="row">
+          <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card card-signin my-5 text-center">
+              <div class="card-body">
+                MIN_PRICE
+                <input type="range" min="1" max="100" value="50">
+                MAX_PRICE
+                <form class="form-inline">
+                  <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Button 1</button>
+                  <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Button 2</button>
+                  <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Button 3</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`
 });
 socket.on('blindIncrease',function(newBlindAmount){
   //TODO maybe. Or not. Depends on how we decide to do blind increases
@@ -59,7 +78,7 @@ document.getElementById("roomCreate").addEventListener("click",roomCreateFunc);
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 // room join function
 function roomJoinFunc(){
-  document.getElementById("mainDiv").innerHTML = 
+  document.getElementById("mainDiv").innerHTML =
   `
 <h5 class="card-title text-center">Broker</h5>
               <form class="form-signin">
@@ -82,7 +101,7 @@ function roomJoinFunc(){
 
 // room create function
 function roomCreateFunc(){
-  document.getElementById("mainDiv").innerHTML = 
+  document.getElementById("mainDiv").innerHTML =
   `
    <h5 class="card-title text-center">Broker</h5>
               <form class="form-signin">
@@ -156,7 +175,7 @@ function redirectToLobbyFunc(memberList){
 
   // if the user is a host check
   if(playerName == memberList[0]){
-    document.getElementById("mainDiv").innerHTML += 
+    document.getElementById("mainDiv").innerHTML +=
               `
               <!-- use something similar below to disable the settings menu and start game button for non host players -->
               <!-- document.getElementById("myP").style.visibility = "hidden"; -->
@@ -186,7 +205,7 @@ function redirectToLobbyFunc(memberList){
                   </div>
                  <button name="room" id="cancelButton" type="button" value="join" class="btn btn-lg btn-primary btn-block text-uppercase">Cancel</button>
                  <button name="room" id="submitSettings" type="button" value="join" class="btn btn-lg btn-primary btn-block text-uppercase">Submit Settings</button>
-               </form> 
+               </form>
       `;
       document.getElementById("cancelButton").addEventListener("click",function()
       {
@@ -194,7 +213,7 @@ function redirectToLobbyFunc(memberList){
       });
       document.getElementById("submitSettings").addEventListener("click",function(){
         var gameSettings = {};
-        gameSettings['stackSize'] = parseInt(document.getElementById('stackSize').value,10); 
+        gameSettings['stackSize'] = parseInt(document.getElementById('stackSize').value,10);
         gameSettings['blindSize'] = parseInt(document.getElementById('blindSize').value,10);
         gameSettings['blindIncrease'] = document.getElementById('blindIncrease').checked;
         gameSettings['roundsToIncBigBlind'] = parseInt(document.getElementById('roundsToIncBigBlind').value,10);
@@ -209,7 +228,7 @@ function redirectToLobbyFunc(memberList){
 };
 
 function addUser(Name){
-  document.getElementById("nameDiv").innerHTML += 
+  document.getElementById("nameDiv").innerHTML +=
 		`<div class="alert alert-secondary" role="alert">`
                 +Name+
               `</div>`;
