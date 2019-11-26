@@ -12,6 +12,9 @@ socket.on('message', function(data) {
 socket.on('redirectToLobby',function(memberList){
   redirectToLobbyFunc(memberList);
 });
+socket.on('nameExists',function(){
+  alert("Someone with that name already exists in the lobby. Please pick a different name.");
+});
 socket.on('gameStartRedirect',function(memberList){
   console.log('gameStartRedirect');
   // TODO: send to game lobby screen function
@@ -25,9 +28,9 @@ socket.on('gameStartRedirect',function(memberList){
                 <input type="range" min="1" max="100" value="50">
                 MAX_PRICE
                 <form class="form-inline">
-                  <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Button 1</button>
-                  <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Button 2</button>
-                  <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Button 3</button>
+                  <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Button 1</button>
+                  <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Button 2</button>
+                  <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Button 3</button>
                 </form>
               </div>
             </div>
@@ -209,7 +212,7 @@ function redirectToLobbyFunc(memberList){
       `;
       document.getElementById("cancelButton").addEventListener("click",function()
       {
-        redirectToLobbyFunc(memberList);
+        socket.emit('lobbyRedirect',gameCode);
       });
       document.getElementById("submitSettings").addEventListener("click",function(){
         var gameSettings = {};

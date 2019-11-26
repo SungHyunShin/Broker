@@ -28,7 +28,7 @@ io.on('connection', function(socket) {
     var playerName = roomInitValues['playerName'];
     var roomSizeLimit = roomInitValues['roomSizeLimit'];
     var gameType = roomInitValues['gameType'];
-    
+
     if(playerName.length>12||playerName.length==0||roomSizeLimit<2||roomSizeLimit>10||!(gameType=='T'||gameType=='B')) return;
 
     gameC += 1;
@@ -44,12 +44,20 @@ io.on('connection', function(socket) {
     socket.join(gameCode,function(){console.log(playerName+" joined "+gameCode)});
     socket.emit('redirectToLobby',games[gameCode]['memberList']);
   });
+  socket.on('lobbyRedirect',function(gameCode){
+    if(gameCode in games){
+      socket.emit('redirectToLobby',games[gameCode]['memberList']);
+    }
+  });
   socket.on('roomJoin', function(player){
     var gameCode = player['gameCode'];
     var playerName = player['playerName'];
     if(playerName.length>12||playerName.length==0||gameCode.length!=5) return;
     if(!(gameCode in games)){
       socket.emit('gameDNE','');
+    }
+    else if(games[gameCode]['memberList'].includes(playerName)){
+      socket.emit('nameExists','');
     }
     else if(games[gameCode]['memberList'].length>=games[gameCode]['roomSizeLimit']){
       socket.emit('roomFull','');
@@ -115,7 +123,7 @@ io.on('connection', function(socket) {
         if(games[gameCode]['inGame']==true){return;}
       if(games[gameCode]['memberList'].length<2||games[gameCode]['memberList'].length>10){return};
       games[gameCode]['inGame'] = true;
-      io.to(gameCode).emit('gameStartRedirect',games[gameCode]['memberList']);      
+      io.to(gameCode).emit('gameStartRedirect',games[gameCode]['memberList']);
       console.log('gameStartRedirect')
     }
     else{
