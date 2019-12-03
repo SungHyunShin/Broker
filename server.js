@@ -2,6 +2,8 @@
 var express = require('express');
 var http = require('http');
 var path = require('path');
+var Hand = require('pokersolver').Hand;
+var Deck = require('card-deck');
 var socketIO = require('socket.io');
 var app = express();
 var server = http.Server(app);
@@ -130,6 +132,16 @@ io.on('connection', function(socket) {
       // do nothing
       console.log("ERROR: "+socket.id+" tried to start a game when it's not in one.");
     }
+  });
+  socket.on('pokerExample',function(){
+    var hand = Hand.solve(['Ad', 'As', 'Jc', 'Th', '2d', 'Qs', 'Qd']);
+    console.log(hand.name); // Two Pair
+    console.log(hand.descr); // Two Pair, A's & Q's
+    var myDeck = new Deck([ 'Ad', 'As', 'Jc', 'Th', '2d', 'Qs', 'Qd' ]);
+    myDeck.shuffle();
+    var topCard = myDeck.top();
+    console.log(topCard);
+
   });
 });
 

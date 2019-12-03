@@ -28,15 +28,21 @@ socket.on('gameStartRedirect',function(memberList){
                 <input type="range" min="1" max="100" value="50">
                 MAX_PRICE
                 <form class="form-inline">
-                  <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Button 1</button>
-                  <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Button 2</button>
-                  <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Button 3</button>
+                  <button id = "btn1" class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Button 1</button>
+                  <button id = "btn2" class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Button 2</button>
+                  <button id = "btn3" class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Button 3</button>
                 </form>
               </div>
             </div>
           </div>
         </div>
-      </div>`
+      </div>`;
+    document.getElementById("btn1").addEventListener("click",function(){
+      socket.emit("pokerExample","");
+    });
+    document.getElementById("btn1").disabled=false;
+    document.getElementById("btn2").disabled=true;
+    document.getElementById("btn3").disabled=true;
 });
 socket.on('blindIncrease',function(newBlindAmount){
   //TODO maybe. Or not. Depends on how we decide to do blind increases
