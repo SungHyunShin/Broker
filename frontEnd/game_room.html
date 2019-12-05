@@ -7,21 +7,150 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/css/poker.css" type="text/css">
   </head>
   <body>
 
-    <div class="container fixed-bottom">
+            <div id="poker_table" class="container_new" data-uid="">
+                <div id="seat0" class="seat">
+                    <div class="holecards">
+                        <div class="playingCard holecard1"></div>
+                        <div class="playingCard holecard2"></div>
+                    </div>
+                    <div class="name-chips">
+                        <div class="player-name"></div>
+                        <div class="chips"></div>
+                    </div>
+                    <div class="bet"></div>
+                </div>
+                <div id="seat1" class="seat">
+                    <div class="holecards">
+                        <div class="playingCard holecard1"></div>
+                        <div class="playingCard holecard2"></div>
+                    </div>
+                    <div class="name-chips">
+                        <div class="player-name"></div>
+                        <div class="chips"></div>
+                    </div>
+                    <div class="bet"></div>
+                </div>
+                <div id="seat2" class="seat">
+                    <div class="holecards">
+                        <div class="playingCard holecard1"></div>
+                        <div class="playingCard holecard2"></div>
+                    </div>
+                    <div class="name-chips">
+                        <div class="player-name"></div>
+                        <div class="chips"></div>
+                    </div>
+                    <div class="bet"></div>
+                </div>
+                <div id="seat3" class="seat">
+                    <div class="holecards">
+                        <div class="playingCard holecard1"></div>
+                        <div class="playingCard holecard2"></div>
+                    </div>
+                    <div class="name-chips">
+                        <div class="player-name"></div>
+                        <div class="chips"></div>
+                    </div>
+                    <div class="bet"></div>
+                </div>
+                <div id="seat4" class="seat">
+                    <div class="holecards">
+                        <div class="playingCard holecard1"></div>
+                        <div class="playingCard holecard2"></div>
+                    </div>
+                    <div class="name-chips">
+                        <div class="player-name"></div>
+                        <div class="chips"></div>
+                    </div>
+                    <div class="bet"></div>
+                </div>
+                <div id="seat5" class="seat">
+                    <div class="holecards">
+                        <div class="playingCard holecard1"></div>
+                        <div class="playingCard holecard2"></div>
+                    </div>
+                    <div class="name-chips">
+                        <div class="player-name"></div>
+                        <div class="chips"></div>
+                    </div>
+                    <div class="bet"></div>
+                </div>
+                <div id="seat6" class="seat">
+                    <div class="holecards">
+                        <div class="playingCard holecard1"></div>
+                        <div class="playingCard holecard2"></div>
+                    </div>
+                    <div class="name-chips">
+                        <div class="player-name"></div>
+                        <div class="chips"></div>
+                    </div>
+                    <div class="bet"></div>
+                </div>
+                <div id="seat7" class="seat">
+                    <div class="holecards">
+                        <div class="playingCard holecard1"></div>
+                        <div class="playingCard holecard2"></div>
+                    </div>
+                    <div class="name-chips">
+                        <div class="player-name"></div>
+                        <div class="chips"></div>
+                    </div>
+                    <div class="bet"></div>
+                </div>
+                <div id="seat8" class="seat">
+                    <div class="holecards">
+                        <div class="playingCard holecard1"></div>
+                        <div class="playingCard holecard2"></div>
+                    </div>
+                    <div class="name-chips">
+                        <div class="player-name"></div>
+                        <div class="chips"></div>
+                    </div>
+                    <div class="bet"></div>
+                </div>
+                <div id="seat9" class="seat">
+                    <div class="holecards">
+                        <div class="playingCard holecard1"></div>
+                        <div class="playingCard holecard2"></div>
+                    </div>
+                    <div class="name-chips">
+                        <div class="player-name"></div>
+                        <div class="chips"></div>
+                    </div>
+                    <div class="bet"></div>
+                </div>
+                <div id="gameBoard">
+                    <div id="flop1" class="playingCard boardcard"></div>
+                    <div id="flop2" class="playingCard boardcard"></div>
+                    <div id="flop3" class="playingCard boardcard"></div>
+                    <div id="turn" class="playingCard boardcard"></div>
+                    <div id="river" class="playingCard boardcard"></div>
+                    <div id="burn1" class="playingCard boardcard"></div>
+                    <div id="burn2" class="playingCard boardcard"></div>
+                    <div id="burn3" class="playingCard boardcard"></div>
+                </div>
+                <div id="pot">
+                    <div id="current-pot"></div>
+                    <div id="total-pot"></div>
+                </div>
+            </div>
+
+
+    <div class="container">
       <div class="row">
-        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+        <div class="col-sm-4 col-md-8 col-lg-12 mx-auto">
           <div class="card card-signin my-5 text-center">
             <div class="card-body">
               MIN_PRICE
               <input type="range" min="1" max="100" value="50">
               MAX_PRICE
               <form class="form-inline">
-                <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Button 1</button>
-                <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Button 2</button>
-                <button class="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Button 3</button>
+                <button class="btn-responsive btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Button 1</button>
+                <button class="btn-responsive btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Button 2</button>
+                <button class="btn-responsive btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit">Button 3</button>
               </form>
             </div>
           </div>
