@@ -1,0 +1,115 @@
+html {
+    font-family: sans-serif; /* 1 */
+    -ms-text-size-adjust: 100%; /* 2 */
+    -webkit-text-size-adjust: 100%; /* 2 */
+}
+
+
+body {
+  /*transform: scale(.8);*/
+  zoom: 50%;
+}
+
+
+
+.minmax-price-container {
+    margin: 0 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.main-body {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 20px;
+}
+
+
+.poker-table-class {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.seat {
+    display: flex;
+    flex-direction: column;
+    margin: 0 10px;
+}
+
+.holecards {
+    height: 73px;
+    width: 102px;
+    display: flex;
+    flex-direction: row;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.playingCard {
+    background-image: url('../images/cardback.png');
+    border-radius: 4px;
+    background-size: 100%;
+    height: 73px;
+    width: 50px;
+}
+
+
+.name-chips {
+    background-color: gray;
+    border-radius: 4px;
+    color: white;
+    font-size: 14px;
+    height: 33px;
+    text-align: center;
+    width: 140px;
+}
+
+.player-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin: 0 40px;
+}
+
+.center-row {
+    justify-content: space-between;
+    margin: 60px 0;
+}
+
+.bgameBoard {
+    display: flex;
+    flex-direction: row;
+}
+
+.flop-cards {
+    display: flex;
+    flex-direction: row;
+    margin-right: 10px;
+}
+
+.burn-cards {
+    display: flex;
+    position: relative;
+    margin-right:-72px;
+}
+
+.burn1 {
+    transform: rotate(-18deg);
+    position: relative;
+    bottom: 0;
+    left: 0;
+}
+.burn2{
+    position: relative;
+    bottom: 0;
+    left: -34px;
+}
+.burn3 {
+    transform: rotate(15deg);
+    position: relative;
+    bottom: 0;
+    left: -72px;
+}
