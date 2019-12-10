@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="poker.css" type="text/css">
+</head>
+<body>
+  <div class="main-body">
+    <div class="margins">
+
+      <div class="poker-table-class" data-uid="">
+        <div class="player-row">
+          <div id="seat4" class="seat">
+            <div class="holecards">
+              <div class="playingCard"></div>
+              <div class="playingCard"></div>
+            </div>
+            <div class="name-chips">
+              <span class="player-name">name</span>
+              <span class="chips">my chips</span>
+            </div>
+            <div id="chips4" class="chipsContainer">
+              <div class="chip"></div>
+              <div class="chip blind"></div>
+            </div>
+          </div>
+          <div id="seat5" class="seat">
+            <div class="holecards">
+              <div class="playingCard"></div>
+              <div class="playingCard"></div>
+            </div>
+            <div class="name-chips">
+              <span class="player-name">name</span>
+              <span class="chips">my chips</span>
+            </div>
+            <div id="chips5" class="chipsContainer">
+              <div class="chip"></div>
+              <div class="chip blind"></div>
+            </div>
+          </div>
+          <div id="seat6" class="seat">
+            <div class="holecards">
+              <div class="playingCard"></div>
+              <div class="playingCard"></div>
+            </div>
+            <div class="name-chips">
+              <span class="player-name">name</span>
+              <span class="chips">my chips</span>
+            </div>
+            <div id="chips6" class="chipsContainer">
+              <div class="chip"></div>
+              <div class="chip blind"></div>
+            </div>
+          </div>
+          <div id="seat7" class="seat">
+            <div class="holecards">
+              <div class="playingCard"></div>
+              <div class="playingCard"></div>
+            </div>
+            <div class="name-chips">
+              <span class="player-name">name</span>
+              <span class="chips">my chips</span>
+            </div>
+            <div id="chips7" class="chipsContainer">
+              <div class="chip"></div>
+              <div class="chip blind"></div>
+            </div>
+          </div>
+        </div>
+        <div class="player-row center-row">
+          <div id="seat3" class="seat">
+            <div class="holecards">
+              <div class="playingCard"></div>
+              <div class="playingCard"></div>
+            </div>
+            <div class="name-chips">
+              <span class="player-name">name</span>
+              <span class="chips">my chips</span>
+            </div>
+            <div class="bet"></div>
+          </div>
+          <div id="chips3" class="chipsContainer">
+            <div class="chip"></div>
+            <div class="chip blind"></div>
+          </div>
+
+          <div class="gameBoard">
+            <div class="flop-cards">
+              <div id="board1" class="boardCard"></div>
+              <div id="board2" class="boardCard"></div>
+              <div id="board3" class="boardCard"></div>
+              <div id="board4" class="boardCard"></div>
+              <div id="board5" class="boardCard"></div>
+            </div>
+            <div class="burn-cards">
+              <div id="burn1" class="boardCard burn1"></div>
+              <div id="burn2" class="boardCard burn2"></div>
+              <div id="burn3" class="boardCard burn3"></div>
+            </div>
+          </div>
+          <div id="chips8" class="chipsContainer">
+            <div class="chip"></div>
+            <div class="chip blind"></div>
+          </div>
+
+          <div id="seat8" class="seat">
+            <div class="holecards">
+              <div class="playingCard"></div>
+              <div class="playingCard"></div>
+            </div>
+            <div class="name-chips">
+              <span class="player-name">name</span>
+              <span class="chips">my chips</span>
+            </div>
+            <div class="bet"></div>
+          </div>
+        </div>
+        <div class="player-row" >
+          <div id="seat2" class="seat">
+            <div id="chips2" class="chipsContainer">
+              <div class="chip"></div>
+              <div class="chip blind"></div>
+            </div>
+            <div class="holecards">
+              <div class="playingCard"></div>
+              <div class="playingCard playingCardFace">
+                <img class="number" src="images/ace.png">
+                <img class="suit" src="images/heart.png">
+              </div>
+            </div>
+            <div class="name-chips">
+              <span class="player-name">name</span>
+              <span class="chips">my chips</span>
+            </div>
+          </div>
+          <div id="seat1" class="seat">
+            <div id="chips1" class="chipsContainer">
+              <div class="chip"></div>
+              <div class="chip blind"></div>
+            </div>
+            <div class="holecards">
+              <div class="boardCard"></div>
+              <div class="boardCard playingCardFace">
+                <img class="number" src="images/ace.png">
+                <img class="suit" src="images/heart.png">
+              </div>
+            </div>
+            <div class="name-chips">
+              <span class="player-name">name</span>
+              <span class="chips">my chips</span>
+            </div>
+          </div>
+          <div class="minmax-price-container">
+            <div class="card card-signin text-center">
+              <div class="card-body">
+                <div class="card-body">
+                  <div class="row">
+                    <text> Bet Amount:</text>
+                    <input type="number" min="1" max="100" onkeypress = "return isNumber(event)">
+                  </div>
+                  <div class="row">
+                    <div id="minPrice">MIN_PRICE</div>
+                    <input type="range" min="1" max="100" value="50">
+                    <div id="maxPrice">MAX_PRICE</div>
+                  </div>
+                  <div class="row">
+                    <form class="form-inline">
+                      <button id="btn1" class="btn-responsive btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Bet</button>
+                      <button id="btn2" class="btn-responsive btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Check</button>
+                      <button id="btn3" class="btn-responsive btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Fold</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- <div id="pot">
+            <div id="current-pot"></div>
+            <div id="total-pot"></div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- <div id="pot">
+    <div id="current-pot"></div>
+    <div id="total-pot"></div>
+  </div> -->
+</div>
+</div>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

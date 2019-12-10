@@ -1,0 +1,279 @@
+html {
+  font-family: sans-serif; /* 1 */
+  -ms-text-size-adjust: 100%; /* 2 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+}
+
+body{
+  width: 100%;
+  height: 100%;
+}
+
+.zoom {
+  zoom:50%;
+}
+
+.margins{
+  margin-left:3vw;
+  margin-right:3vw;
+}
+
+.chip {
+  background-image: url('images/chip.png');
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color:white;
+  background-size: 100%;
+  height:5vw;
+  font-size: 15px;
+  width:5vw;
+  margin-top: .5vw;
+  margin-bottom: .5vw;
+  margin-left: .5vw;
+  visibility: hidden;
+}
+
+.blind {
+}
+
+.mchip {
+  background-image: url('images/chip.png');
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color:white;
+  background-size: 100%;
+  height:80px;
+  font-size: 10px;
+  width:80px;
+  margin-bottom: 1vw;
+  margin-top: 1vw;
+  margin-left: 1vw;
+  margin-right: 1vw;
+  visibility: hidden;
+}
+
+.chipsContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.minmax-price-container {
+  align-self: flex-end;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  display: flex;
+  justify-content: center;
+}
+
+.main-body {
+  display: flex;
+  background-image: url('images/table.png');
+  background-size: 100%;
+  background-color: #525252;
+  flex-direction: column;
+  overflow: auto;
+  min-height: 100%;
+}
+
+.poker-table-class {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top:10px;
+  margin-bottom:30px;
+}
+
+.seat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.holecards {
+  display: flex;
+  flex-direction: row;
+}
+
+.playingCard {
+  /*background-image: url('images/cardback.png');*/
+  background-color: #577053;
+  border-radius: 4px;
+  background-size: 100%;
+  height: 7vw;
+  width: 5vw;
+  margin: 2px;
+}
+
+.boardCard {
+  /*background-image: url('images/cardface.png');*/
+  background-color: #577053;
+  border-radius: 4px;
+  background-size: 100%;
+  height: 9.8vw;
+  width: 7vw;
+  margin: 2px;
+  z-index: 1;
+}
+
+.mplayingCard {
+  /*background-image: url('images/cardback.png');*/
+  background-color: #577053;
+  border-radius: 4px;
+  background-size: 100%;
+  height: 110px;
+  width: 77px;
+  margin: 2px;
+}
+
+.playingCardFace {
+  /*background-image: */
+  flex-wrap: wrap;
+  display: flex;
+  background-image: url('images/cardface.png') !important;
+}
+
+.number{
+  flex: 50%;
+  z-index: 2;
+  max-width:50%;
+  height: auto;
+  align-self: flex-start;
+  align-items: flex-start;
+  margin-right: auto;
+  margin-left: 2px;
+}
+
+.suit{
+  flex: 50%;
+  z-index: 2;
+  max-width:50%;
+  height:auto;
+  align-self: flex-end;
+  align-items: flex-end;
+  margin-left: auto;
+  margin-right: 2px;
+
+}
+
+.mboardCard {
+  /*background-image: url('images/cardface.png');*/
+  background-color: #577053;
+  border-radius: 4px;
+  background-size: 100%;
+  height: 120px;
+  width: 84px;
+  margin: 2px;
+}
+
+.name-chips {
+  background-color: #333333;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  height: 33px;
+  text-align: center;
+  width: 140px;
+}
+
+.player-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin: 0 10vw;
+}
+
+.mplayer-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin: 0 20vw;
+}
+
+.center-row {
+  justify-content: space-between;
+  margin: 3vw 0;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mcenter-row {
+  justify-content: space-between;
+  margin: 0 2vw;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.gameBoard {
+  display: flex;
+  flex-direction: row;
+  margin-left: .25vw;
+  margin-right: .25vw;
+}
+
+.flop-cards {
+  display: flex;
+  flex-direction: row;
+  margin-right: ;
+}
+
+.mburn-cards {
+  display: flex;
+  position: relative;
+  margin-right:-168px;
+  margin-left: 20px;
+  background-color: None;
+}
+
+.mburn1 {
+  transform: rotate(-18deg);
+  position: relative;
+  bottom: 0;
+  left: 0;
+  visibility: hidden;
+}
+.mburn2{
+  position: relative;
+  bottom: 0;
+  left: -84px;
+  visibility: hidden;
+}
+.mburn3 {
+  transform: rotate(15deg);
+  position: relative;
+  bottom: 0;
+  left: -168px;
+  visibility: hidden;
+}
+.burn-cards {
+  display: flex;
+  position: relative;
+  margin-right:-14vw;
+  margin-left: 2vw;
+  background-color:none;
+}
+
+.burn1 {
+  transform: rotate(-18deg);
+  position: relative;
+  bottom: 0;
+  left: 0;
+  visibility: hidden;
+}
+.burn2{
+  position: relative;
+  bottom: 0;
+  left: -7vw;
+  visibility: hidden;
+}
+.burn3 {
+  transform: rotate(15deg);
+  position: relative;
+  bottom: 0;
+  left: -14vw;
+  visibility: hidden;
+}
