@@ -11,6 +11,7 @@ Just start a game and let users hop right in!
 This is hosted over at: https://broker-poker.herokuapp.com
 
 To Do list:
+- [ ] add random gameCode
 - [ ] add BlackJack
 - [ ] add text invites
 - [ ] move things into more functions in server.js
