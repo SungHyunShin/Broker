@@ -27,7 +27,6 @@ var nameToId = {};
 
 // Add the WebSocket handlers
 io.on('connection', function(socket) {
-  console.log(socket.id+" connected")
   socket.on('roomInit', function(roomInitValues){
     var playerName = roomInitValues['playerName'];
     var roomSizeLimit = roomInitValues['roomSizeLimit'];
@@ -37,7 +36,6 @@ io.on('connection', function(socket) {
 
     gameC += 1;
     var gameCode = gameC.toString().padStart(5, "0");
-    console.log(gameCode);
     socket.emit('gameCode',gameCode);
     games[gameCode] = {};
     games[gameCode]['gameType'] = gameType;
@@ -46,7 +44,7 @@ io.on('connection', function(socket) {
     games[gameCode]['inGame'] = false;
     idToName[socket.id] = {'playerName':playerName,'gameCode':gameCode};
     nameToId[playerName] = socket.id;
-    socket.join(gameCode,function(){console.log(playerName+" joined "+gameCode)});
+    socket.join(gameCode,function(){});
     socket.emit('redirectToLobby',games[gameCode]['memberList']);
   });
   socket.on('lobbyRedirect',function(gameCode){
@@ -73,7 +71,7 @@ io.on('connection', function(socket) {
       socket.emit('roomFull','');
     }
     else{
-      socket.join(gameCode,function(){console.log(playerName+" joined "+gameCode)});
+      socket.join(gameCode,function(){});
       games[gameCode]['memberList'].push(playerName);
       idToName[socket.id] = {'playerName':playerName,'gameCode':gameCode};
       nameToId[playerName] = socket.id;
@@ -82,7 +80,7 @@ io.on('connection', function(socket) {
     }
   });
   socket.on('disconnect', function(){
-    console.log(socket.id+" disconnected")
+    //console.log(socket.id+" disconnected")
     if(socket.id in idToName){
       var playerName = idToName[socket.id]['playerName'];
       var gameCode = idToName[socket.id]['gameCode'];
@@ -112,8 +110,8 @@ io.on('connection', function(socket) {
           if(games[gameCode]['gameValues']['currentRound']['playersIn'].includes(playerName)) games[gameCode]['gameValues']['currentRound']['playersIn'].splice(games[gameCode]['gameValues']['currentRound']['playersIn'].indexOf(playerName),1);
           if(games[gameCode]['gameValues']['bb'].includes(playerName)) games[gameCode]['gameValues']['bb'].splice(games[gameCode]['gameValues']['bb'].indexOf(playerName),1);
           currentRound = games[gameCode]['gameValues']['currentRound'];
-          console.log("line 309");
-          console.log(games[gameCode]['gameValues']);
+          //console.log("line 309");
+          //console.log(games[gameCode]['gameValues']);
 
           if(currentRound['playersIn'].length<=1){
             if(actingName!=playerName){
@@ -126,7 +124,7 @@ io.on('connection', function(socket) {
               return;
             }
             // go to next round
-            console.log("ROUND OVER");
+            //console.log("ROUND OVER");
             var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
             clearTimeout(timer);
           }
@@ -193,7 +191,7 @@ io.on('connection', function(socket) {
                 return;
               }
               // go to next round
-              console.log("ROUND OVER");
+              //console.log("ROUND OVER");
               var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
               return;
             }
@@ -240,7 +238,7 @@ io.on('connection', function(socket) {
                 return;
               }
               // go to next round
-              console.log("ROUND OVER");
+              //console.log("ROUND OVER");
               var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
               return;
             }
@@ -379,7 +377,7 @@ io.on('connection', function(socket) {
     if(socket.id in idToName){
       var playerName = idToName[socket.id]['playerName'];
       var gameCode = idToName[socket.id]['gameCode'];
-      console.log(playerName+': playerBet');
+      //console.log(playerName+': playerBet');
 
       // check if it's their turn and legal move
       if(playerName != games[gameCode]['gameValues']['currentRound']['toAct'][0]){
@@ -433,8 +431,8 @@ io.on('connection', function(socket) {
 
       socket.emit('turnOver','');
       currentRound = games[gameCode]['gameValues']['currentRound'];
-      console.log("line 309");
-      console.log(games[gameCode]['gameValues']);
+      //console.log("line 309");
+      //console.log(games[gameCode]['gameValues']);
       if(currentRound['toAct'].length==0){
         // reset list to playersIn
         games[gameCode]['gameValues']['currentRound']['toAct'] = games[gameCode]['gameValues']['currentRound']['playersIn'].slice(0);
@@ -497,7 +495,7 @@ io.on('connection', function(socket) {
             return;
           }
           // go to next round
-          console.log("ROUND OVER");
+          //console.log("ROUND OVER");
           var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
           return;
         }
@@ -544,7 +542,7 @@ io.on('connection', function(socket) {
             return;
           }
           // go to next round
-          console.log("ROUND OVER");
+          //console.log("ROUND OVER");
           var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
           return;
         }
@@ -581,7 +579,7 @@ io.on('connection', function(socket) {
     if(socket.id in idToName){
       var playerName = idToName[socket.id]['playerName'];
       var gameCode = idToName[socket.id]['gameCode'];
-      console.log(playerName+': playerCheck');
+      //console.log(playerName+': playerCheck');
 
       // check if it's their turn and legal move
       if(playerName != games[gameCode]['gameValues']['currentRound']['toAct'][0]){
@@ -594,8 +592,8 @@ io.on('connection', function(socket) {
 
       socket.emit('turnOver','');
       currentRound = games[gameCode]['gameValues']['currentRound'];
-      console.log("line 309");
-      console.log(games[gameCode]['gameValues']);
+      //console.log("line 309");
+      //console.log(games[gameCode]['gameValues']);
       if(currentRound['toAct'].length==0){
         // reset list to playersIn
         games[gameCode]['gameValues']['currentRound']['toAct'] = games[gameCode]['gameValues']['currentRound']['playersIn'].slice(0);
@@ -658,7 +656,7 @@ io.on('connection', function(socket) {
             return;
           }
           // go to next round
-          console.log("ROUND OVER");
+          //console.log("ROUND OVER");
           var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
           return;
         }
@@ -705,7 +703,7 @@ io.on('connection', function(socket) {
             return;
           }
           // go to next round
-          console.log("ROUND OVER");
+          //console.log("ROUND OVER");
           var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
           return;
         }
@@ -742,7 +740,7 @@ io.on('connection', function(socket) {
     if(socket.id in idToName){
       var playerName = idToName[socket.id]['playerName'];
       var gameCode = idToName[socket.id]['gameCode'];
-      console.log(playerName+': playerFold');
+      //console.log(playerName+': playerFold');
 
       // check if it's their turn and legal move
       if(playerName != games[gameCode]['gameValues']['currentRound']['toAct'][0]){
@@ -764,8 +762,8 @@ io.on('connection', function(socket) {
       // send message to next actor
       socket.emit('turnOver','');
       currentRound = games[gameCode]['gameValues']['currentRound'];
-      console.log("line 309");
-      console.log(games[gameCode]['gameValues']);
+      //console.log("line 309");
+      //console.log(games[gameCode]['gameValues']);
 
       if(currentRound['playersIn'].length==1){
         // pot logic
@@ -775,7 +773,7 @@ io.on('connection', function(socket) {
           return;
         }
         // go to next round
-        console.log("ROUND OVER");
+        //console.log("ROUND OVER");
         var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
         return;
       }
@@ -842,7 +840,7 @@ io.on('connection', function(socket) {
             return;
           }
           // go to next round
-          console.log("ROUND OVER");
+          //console.log("ROUND OVER");
           var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
           return;
         }
@@ -889,7 +887,7 @@ io.on('connection', function(socket) {
             return;
           }
           // go to next round
-          console.log("ROUND OVER");
+          //console.log("ROUND OVER");
           var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
           return;
         }
@@ -926,7 +924,7 @@ io.on('connection', function(socket) {
     if(socket.id in idToName){
       var playerName = idToName[socket.id]['playerName'];
       var gameCode = idToName[socket.id]['gameCode'];
-      console.log(playerName+': playerRaise');
+      //console.log(playerName+': playerRaise');
       // check betSize
       if(betAmt<games[gameCode]['gameValues']['currentRound']['raiseAmt']||
         betAmt>games[gameCode]['gameValues']['players'][playerName]['stackSize'])
@@ -992,8 +990,8 @@ io.on('connection', function(socket) {
 
       socket.emit('turnOver','');
       currentRound = games[gameCode]['gameValues']['currentRound'];
-      console.log("line 309");
-      console.log(games[gameCode]['gameValues']);
+      //console.log("line 309");
+      //console.log(games[gameCode]['gameValues']);
       if(currentRound['toAct'].length==0){
         // reset list to playersIn
         games[gameCode]['gameValues']['currentRound']['toAct'] = games[gameCode]['gameValues']['currentRound']['playersIn'].slice(0);
@@ -1056,7 +1054,7 @@ io.on('connection', function(socket) {
             return;
           }
           // go to next round
-          console.log("ROUND OVER");
+          //console.log("ROUND OVER");
           var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
           return;
         }
@@ -1103,7 +1101,7 @@ io.on('connection', function(socket) {
             return;
           }
           // go to next round
-          console.log("ROUND OVER");
+          //console.log("ROUND OVER");
           var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
           return;
         }
@@ -1140,7 +1138,7 @@ io.on('connection', function(socket) {
     if(socket.id in idToName){
       var playerName = idToName[socket.id]['playerName'];
       var gameCode = idToName[socket.id]['gameCode'];
-      console.log(playerName+': playerCall');
+      //console.log(playerName+': playerCall');
 
       // check if it's their turn and legal move
       if(playerName != games[gameCode]['gameValues']['currentRound']['toAct'][0]){
@@ -1191,8 +1189,8 @@ io.on('connection', function(socket) {
 
       socket.emit('turnOver','');
       currentRound = games[gameCode]['gameValues']['currentRound'];
-      console.log("line 309");
-      console.log(games[gameCode]['gameValues']);
+      //console.log("line 309");
+      //console.log(games[gameCode]['gameValues']);
       if(currentRound['toAct'].length==0){
         // reset list to playersIn
         games[gameCode]['gameValues']['currentRound']['toAct'] = games[gameCode]['gameValues']['currentRound']['playersIn'].slice(0);
@@ -1255,7 +1253,7 @@ io.on('connection', function(socket) {
             return;
           }
           // go to next round
-          console.log("ROUND OVER");
+          //console.log("ROUND OVER");
           var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
           return;
         }
@@ -1305,7 +1303,7 @@ io.on('connection', function(socket) {
             return;
           }
           // go to next round
-          console.log("ROUND OVER");
+          //console.log("ROUND OVER");
           var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
           return;
         }
@@ -1354,8 +1352,8 @@ io.on('connection', function(socket) {
     else
     io.to(gameCode).emit('updateStacks',{'playerList':playerList,'bigBlind':games[gameCode]['gameValues']['gameSettings']['blindSize'],'raise':games[gameCode]['gameValues']['currentRound']['raise'],'raiseAmt':games[gameCode]['gameValues']['currentRound']['raiseAmt']});
     dealCards(currentRound,buildPlayerStackObject(gameCode));
-    console.log("line 390");
-    console.log(games[gameCode]['gameValues']);
+    //console.log("line 390");
+    //console.log(games[gameCode]['gameValues']);
     io.to(nameToId[currentRound['toAct'][0]]).emit('toAct',{'raise':true,'raiseAmt':currentRound['raiseAmt']});
     io.to(gameCode).emit('resetPots','');
     io.to(gameCode).emit('totalPot',games[gameCode]['gameValues']['currentRound']['totalPot']);
@@ -1444,14 +1442,14 @@ io.on('connection', function(socket) {
           tieCount++;
         }
         while(i<j){
-          console.log(sortablePZ[i][0]+" HAS WON "+winnings+". ");
+          //console.log(sortablePZ[i][0]+" HAS WON "+winnings+". ");
           message += sortablePZ[i][0]+" had won "+winnings+". "
           games[gameCode]['gameValues']['players'][sortablePZ[i++][0]]['stackSize'] += winnings/tieCount;
         }
         i--;
       }
       else{
-        console.log(sortablePZ[i][0]+" HAS WON "+winnings+". ");
+        //console.log(sortablePZ[i][0]+" HAS WON "+winnings+". ");
         message += sortablePZ[i][0]+" had won "+winnings+". "
         games[gameCode]['gameValues']['players'][sortablePZ[i][0]]['stackSize'] += winnings;
       }
