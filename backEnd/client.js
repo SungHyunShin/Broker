@@ -4,6 +4,7 @@ var socket = io();
 var playerName = '';
 var gameCode = '';
 var seats = {};
+var mainPotCurr = 0;
 
 // Incoming message from server handlers
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -15,16 +16,40 @@ socket.on('disconnect',function(){
   document.getElementById("boardDiv").innerHTML =``;
   document.getElementById("boardDiv").style.display = "none";
   document.getElementById("exitDiv").innerHTML =``;
-
-  socket.emit('disconnect','');
+});
+socket.on('displayBoardFlop',function(cards){
+  displayFlop(cards);
+});
+socket.on('displayBoardTurn',function(card){
+  displayTurn(card);
+});
+socket.on('revealCard',function(data){
+  playerN = data['playerName'];
+  hand = data['hand'];
+  seat = seats[playerN];
+  buildCards(hand,seat);
+});
+socket.on('updateMinRanges',function(data){
+  document.getElementById("rangeInput").min = parseInt(data);
+  document.getElementById("betInput").min = parseInt(data);
+  document.getElementById("minPrice").innterHTML = data;
 })
+socket.on('displayBoardRiver',function(card){
+  displayRiver(card);
+});
+socket.on('resetBoard',function(){
+  resetBoard();
+  removeAllChips();
+});
+socket.on('resetBets',function(){
+  seatKeys = Object.keys(seats);
+  for(var i=0; i < seatKeys.length;i++){
+    document.getElementById(seats[seatKeys[i]]+"bet").style.visibility="hidden";
+    document.getElementById(seats[seatKeys[i]]+"bet").innerHTML = ``;
+  }
+});
 socket.on('message', function(data) {
   console.log(data);
-});
-socket.on('clientDisconnect',function(){
-  document.getElementById('mainDiv').innerHTML = `
-  <h4>You've been disconnected by the server.</h4>
-  `;
 });
 socket.on('redirectToLobby',function(memberList){
   redirectToLobbyFunc(memberList);
@@ -39,14 +64,45 @@ socket.on('dealCards',function(data){
   dealInitial(data['players'], data['hand'], data['bbPlayer'], data['sbPlayer'],data['bigBlind']);
 });
 socket.on('gameStartRedirect',function(data){
-  gameStartRedirect(data['playerList'],data['bigBlind']);
+  gameStartRedirect(data['playerList'],data['bigBlind'],data['memberList']);
 });
-socket.on('playerTurn',function(){
-  //TODO either we give the player actions they can take, or maybe we just need to let them know its their turn and they can do logic on their own
-  // probably better practice to give turns they can do.
-});
-socket.on('disconnectedPlayerGame',function(){
+socket.on('disconnectedPlayerGame',function(data){
+  console.log(data);
+  playerN = data['playerName'];
+  memberList = data['memberList'];
+  if(playerName==memberList[0]){
+    document.getElementById("exitDiv").innerHTML =
+    `<div class="col-sm-9 col-md-10 col-lg-10 mx-auto">
+      <button id = "backButton" class="btn pull-left btn-outline-success my-2 my-sm-0 mr-sm-2" data-toggle="modal" data-target="#myModal" type="button">End Game?</button>
+    </div>
+    <div class="modal fade" id="myModal" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Are you sure?</h4>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="yesClose" class="btn btn-default" data-dismiss="modal" onclick="socket.emit('backButton','');">Yes. End game.</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">No. Don't end.</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
   //TODO: probably just delete the player as game logic is handled by just the server.
+  document.getElementById(seats[playerN]+'card1').style.backgroundImage=``;
+  document.getElementById(seats[playerN]+'card2').style.backgroundImage=``;
+  document.getElementById(seats[playerN]+"name").innerHTML=``;
+  document.getElementById(seats[playerN]+"chips").innerHTML=``;
+  delete seats[playerN];
+});
+socket.on('playerFold',function(playerName){
+  seat = seats[playerName];
+  displayNull(seat);
+});
+socket.on('roundOver',function(){
+  removeAllBets();
 });
 socket.on('newUser',function(playerName){
   addUser(playerName);
@@ -63,8 +119,112 @@ socket.on('disconnectedPlayer',function(memberList){
 socket.on('gameCode',function(data){
   gameCode = data;
 });
+socket.on('totalPot',function(totalPotAmt){
+  document.getElementById("totalPot").innerHTML = 'Total Pot: '+(totalPotAmt).toString();
+});
+socket.on('mainPot',function(mainPotAmt){
+  mainPotCurr += mainPotAmt;
+  document.getElementById("mainPot").innerHTML = 'Main Pot: '+(mainPotCurr).toString();
+});
+socket.on('resetPots',function(){
+  mainPotCurr = 0;
+  document.getElementById("totalPot").innerHTML = 'Total Pot:';
+  document.getElementById("mainPot").innerHTML = 'Main Pot: 0';
+})
 socket.on('gameSettingsError',function(message){
   alert(message);
+});
+socket.on('userMessage',function(message){
+  document.getElementById("messToUser").innerHTML = message;
+});
+socket.on('displayWinner',function(message){
+  document.getElementById("winner").innerHTML = message;
+  setTimeout(function(){document.getElementById("winner").innerHTML = '';}, 5000);
+});
+socket.on('playerBet',function(data){
+  playerN = data['playerName'];
+  betAmt = data['betAmt'];
+  seat=seats[playerN];
+  document.getElementById(seat+"bet").style.visibility="visible";
+  document.getElementById(seat+"bet").innerHTML=betAmt;
+});
+socket.on('toAct',function(raiseData){
+  raise = raiseData['raise'];
+  raiseAmt = raiseData['raiseAmt'];
+
+  document.getElementById("btn1").disabled=false;
+  document.getElementById("btn2").disabled=false;
+  document.getElementById("btn3").disabled=false;
+  if(raise){
+    document.getElementById("btn1").innerHTML="Raise"; // needs checking
+    document.getElementById("btn2").innerHTML="Call"; // needs checking
+    document.getElementById("btn1").removeEventListener("click",bet);
+    document.getElementById("btn2").removeEventListener("click",check);
+    document.getElementById("btn1").addEventListener("click",raiseF);
+    document.getElementById("btn2").addEventListener("click",call);
+  }
+  else{
+    document.getElementById("btn1").removeEventListener("click",raiseF);
+    document.getElementById("btn2").removeEventListener("click",call);
+    document.getElementById("btn1").addEventListener("click",bet);
+    document.getElementById("btn2").addEventListener("click",check);
+  }
+  document.getElementById("btn3").addEventListener("click",function(){
+    socket.emit('playerFold','');
+  });
+});
+socket.on('turnOver',function(){
+  document.getElementById("btn1").innerHTML="Bet"; // needs checking
+  document.getElementById("btn2").innerHTML="Check"; // needs checking
+  document.getElementById("btn1").disabled=true;
+  document.getElementById("btn2").disabled=true;
+  document.getElementById("btn3").disabled=true;
+})
+socket.on('updateStacks',function(data){
+  playerList = data['playerList'];
+  raise = data['raise'];
+  BB= data['bigBlind'];
+  if(raise)
+    BB = data['raiseAmt'];
+
+  seatList = [];
+  memberList = Object.keys(playerList);
+  for(var i = memberList.indexOf(playerName) ; i < memberList.length;i++){
+    seatList.push(memberList[i]);
+  }
+  for(var i=0; i < memberList.indexOf(playerName);i++){
+    seatList.push(memberList[i]);
+  }
+  updateSeats(seatList,playerList);
+  message = document.getElementById('winner').innerHTML;
+  document.getElementById('inputCard').innerHTML = `<div class="card card-signin text-center">
+      <div class="card-body">
+      <div class="row">
+        <p class="text-left" id="winner">`+message+`</p>
+      </div>
+        <div class="row">
+          <p class="text-left" id="messToUser"></p>
+        </div>
+        <div class="row">
+          <text> Bet Amount:</text>
+          <input id="betInput" type="number" min="`+BB+`" max="`+playerList[playerName]+`" onkeypress = "return isNumberBet(event) value="`+BB+`";">
+        </div>
+        <div class="row">
+          <div id="minPrice">`+BB+`</div>
+          <input id="rangeInput" type="range" min="`+BB+`" max="`+playerList[playerName]+`" oninput="betInput.value=rangeInput.value" value="`+BB+`">
+          <div id="maxPrice">`+playerList[playerName]+`</div>
+        </div>
+        <div class="row">
+          <form class="form-inline">
+            <button id="btn1" class="btn btn-primary" type="button">Bet</button>
+            <button id="btn2" class="btn btn-primary" type="button">Check</button>
+            <button id="btn3" class="btn btn-primary" type="button">Fold</button>
+          </form>
+        </div>
+    </div>`;
+    document.getElementById("btn1").disabled=true;
+    document.getElementById("btn2").disabled=true;
+    document.getElementById("btn3").disabled=true;
 });
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
@@ -75,6 +235,26 @@ document.getElementById("roomJoin").addEventListener("click",roomJoinFunc);
 
 // room create button listener
 document.getElementById("roomCreate").addEventListener("click",roomCreateFunc);
+
+function raiseF(){
+  if(document.getElementById('rangeInput').value>=document.getElementById('rangeInput').min){
+    console.log(document.getElementById('rangeInput').value);
+    socket.emit('playerRaise',document.getElementById('rangeInput').value);
+  }
+}
+function call(){
+  socket.emit('playerCall','');
+}
+function bet(){
+  if(document.getElementById('rangeInput').value>=document.getElementById('rangeInput').min){
+    console.log(document.getElementById('rangeInput').value);
+    socket.emit('playerBet',document.getElementById('rangeInput').value);
+  }
+}
+function check(){
+  socket.emit('playerCheck','');
+}
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
 // vvvvvv FUNCTIONS vvvvvvvv
@@ -247,8 +427,7 @@ function addUser(Name){
   `</div>`;
 }
 
-function gameStartRedirect(playerList,BB){
-  memberList = Object.keys(playerList);
+function gameStartRedirect(playerList,BB,memberList){
   if(playerName == memberList[0]){
     document.getElementById("exitDiv").innerHTML =
     `<div class="col-sm-9 col-md-10 col-lg-10 mx-auto">
@@ -350,6 +529,7 @@ function gameStartRedirect(playerList,BB){
                 <div id="3bet" class="mchip"></div>
                 <div id="3bb" class="mchip blind"></div>
               </div>
+              <div class="boardCol">
               <div class="gameBoard">
                 <div class="flop-cards">
                   <div id="board1" class="mboardCard"></div>
@@ -363,6 +543,9 @@ function gameStartRedirect(playerList,BB){
                   <div id="burn2" class="mboardCard mburn2"></div>
                   <div id="burn3" class="mboardCard mburn3"></div>
                 </div>
+              </div>
+              <p id="totalPot">Total Pot:</p>
+              <p id="mainPot">Main Pot:</p>
               </div>
 
               <div id="chips8" class="chipsContainer">
@@ -411,14 +594,17 @@ function gameStartRedirect(playerList,BB){
                 </div>
               </div>
               <div class="minmax-price-container">
-                <div class="card card-signin text-center">
+                <div id="inputCard"  class="card card-signin text-center">
                   <div class="card-body">
+                  <div class="row">
+                    <p class="text-left" id="winner"></p>
+                  </div>
                   <div class="row">
                     <p class="text-left" id="messToUser"></p>
                   </div>
                   <div class="row">
                     <text> Bet Amount:</text>
-                    <input id="betInput" type="number" min="`+BB+`" max="`+playerList[playerName]+`" onkeypress = "return isNumberBet(event);">
+                    <input id="betInput" type="number" min="`+BB+`" max="`+playerList[playerName]+`" onkeypress = "return isNumberBet(event) value="`+BB+`";">
                   </div>
                   <div class="row">
                     <div id="minPrice">`+BB+`</div>
@@ -427,19 +613,16 @@ function gameStartRedirect(playerList,BB){
                   </div>
                     <div class="row">
                       <form class="form-inline">
-                        <button id="btn1" class="btn-responsive btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Bet</button>
-                        <button id="btn2" class="btn-responsive btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Check</button>
-                        <button id="btn3" class="btn-responsive btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Fold</button>
+                        <button id="btn1" class="btn btn-primary" type="button">Bet</button>
+                        <button id="btn2" class="btn btn-primary" type="button">Check</button>
+                        <button id="btn3" class="btn btn-primary" type="button">Fold</button>
                       </form>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- <div id="pot">
-              <div id="current-pot"></div>
-              <div id="total-pot"></div>
-            </div> -->
+
           </div>
         </div>
       </div>`;
@@ -524,7 +707,7 @@ function gameStartRedirect(playerList,BB){
                 <div id="3bet" class="chip"></div>
                 <div id="3bb" class="chip blind"></div>
               </div>
-
+              <div class="boardCol">
               <div class="gameBoard">
                 <div class="flop-cards">
                   <div id="board1" class="boardCard"></div>
@@ -538,6 +721,9 @@ function gameStartRedirect(playerList,BB){
                   <div id="burn2" class="boardCard burn2"></div>
                   <div id="burn3" class="boardCard burn3"></div>
                 </div>
+              </div>
+              <p id="totalPot">Total Pot:</p>
+              <p id="mainPot">Main Pot:</p>
               </div>
               <div id="chips8" class="chipsContainer">
                 <div id="8bet" class="chip"></div>
@@ -586,31 +772,33 @@ function gameStartRedirect(playerList,BB){
                 </div>
               </div>
               <div class="minmax-price-container">
-                <div class="card card-signin text-center">
+                <div id="inputCard"  class="card card-signin text-center">
                   <div class="card-body">
-                    <div class="card-body">
-                      <div class="row">
-                        <p class="text-left" id="messToUser"></p>
-                      </div>
-                      <div class="row">
-                        <text> Bet Amount:</text>
-                        <input id="betInput" type="number" min="`+BB+`" max="`+playerList[playerName]+`" onkeypress = "return isNumberBet(event);">
-                      </div>
-                      <div class="row">
-                        <div id="minPrice">`+BB+`</div>
-                        <input id="rangeInput" type="range" min="`+BB+`" max="`+playerList[playerName]+`" oninput="betInput.value=rangeInput.value" value="`+BB+`">
-                        <div id="maxPrice">`+playerList[playerName]+`</div>
-                      </div>
-                      <div class="row">
-                        <form class="form-inline">
-                          <button id="btn1" class="btn-responsive btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Bet</button>
-                          <button id="btn2" class="btn-responsive btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Check</button>
-                          <button id="btn3" class="btn-responsive btn-outline-success my-2 my-sm-0 mr-sm-2" type="button">Fold</button>
-                        </form>
-                      </div>
+                  <div class="row">
+                    <p class="text-left" id="winner"></p>
+                  </div>
+                  <div class="row">
+                    <p class="text-left" id="messToUser"></p>
+                  </div>
+                  <div class="row">
+                    <text> Bet Amount:</text>
+                    <input id="betInput" type="number" min="`+BB+`" max="`+playerList[playerName]+`" onkeypress = "return isNumberBet(event) value="`+BB+`";">
+                  </div>
+                  <div class="row">
+                    <div id="minPrice">`+BB+`</div>
+                    <input id="rangeInput" type="range" min="`+BB+`" max="`+playerList[playerName]+`" oninput="betInput.value=rangeInput.value" value="`+BB+`">
+                    <div id="maxPrice">`+playerList[playerName]+`</div>
+                  </div>
+                    <div class="row">
+                      <form class="form-inline">
+                        <button id="btn1" class="btn btn-primary" type="button">Bet</button>
+                        <button id="btn2" class="btn btn-primary" type="button">Check</button>
+                        <button id="btn3" class="btn btn-primary" type="button">Fold</button>
+                      </form>
                     </div>
                   </div>
-                </div>`;
+                </div>
+              </div>`;
   }
   document.getElementById("btn1").disabled=true;
   document.getElementById("btn2").disabled=true;
@@ -637,7 +825,15 @@ function displayNum(number){
   if(number<1100){
     return number;
   }
-  return Math.round(number/1000 * Math.pow(10, 1 || 0)) / Math.pow(10, 1 || 0).toString()+"k";
+  return Math.floor(number/1000 * Math.pow(10, 1 || 0)) / Math.pow(10, 1 || 0).toString()+"k";
+}
+
+function updateSeats(seatList,playerList){
+  for(var i=0; i<seatList.length;i++){
+    seat = seats[seatList[i]];
+    document.getElementById((seat)+"name").innerHTML=seatList[i];
+    document.getElementById((seat)+"chips").innerHTML=displayNum(playerList[seatList[i]]);
+  }
 }
 
 function addSeats(seatList,playerList){
@@ -646,6 +842,37 @@ function addSeats(seatList,playerList){
     document.getElementById((i+1)+"name").innerHTML=seatList[i];
     document.getElementById((i+1)+"chips").innerHTML=displayNum(playerList[seatList[i]]);
   }
+}
+
+function resetBoard(){
+  for(var i = 0;i < 5; i++){
+    document.getElementById("board"+(i+1).toString()).classList.remove('playingCardFace');
+    document.getElementById("board"+(i+1).toString()).innerHTML='';
+  }
+  for(var i=1;i<9;i++){
+    document.getElementById((i).toString()+"card1").classList.remove('playingCardFace');
+    document.getElementById((i).toString()+"card1").innerHTML='';
+    document.getElementById((i).toString()+"card2").classList.remove('playingCardFace');
+    document.getElementById((i).toString()+"card2").innerHTML='';
+  }
+  document.getElementById("burn1").style.visibility="hidden";
+  document.getElementById("burn2").style.visibility="hidden";
+  document.getElementById("burn3").style.visibility="hidden";
+}
+
+function displayFlop(cards){
+  for(var i = 0;i < cards.length; i++){
+    buildCard(cards[i],"board"+(i+1).toString());
+  }
+  document.getElementById("burn1").style.visibility="visible";
+}
+function displayTurn(card){
+  buildCard(card,"board4")
+  document.getElementById("burn2").style.visibility="visible";
+}
+function displayRiver(card){
+  buildCard(card,"board5")
+  document.getElementById("burn3").style.visibility="visible";
 }
 
 function dealInitial(players, hand, bbPlayer, sbPlayer, bbVal){
@@ -672,17 +899,47 @@ function dealInitial(players, hand, bbPlayer, sbPlayer, bbVal){
   }
 }
 
+function displayNull(playerSeat){
+  if(playerSeat==1){
+    document.getElementById(playerSeat+'card1').style.innerHTML= "";
+    document.getElementById(playerSeat+'card2').style.innerHTML= "";
+  }
+  document.getElementById(playerSeat+'card1').style.backgroundImage= "";
+  document.getElementById(playerSeat+'card1').classList.remove('playingCardFace');
+  document.getElementById(playerSeat+'card1').innerHTML="";
+  document.getElementById(playerSeat+'card2').style.backgroundImage= "";
+  document.getElementById(playerSeat+'card2').classList.remove('playingCardFace');
+  document.getElementById(playerSeat+'card2').innerHTML="";
+}
+
+function removeAllChips(){
+  seatKeys = Object.keys(seats);
+  for(var i=0; i < seatKeys.length;i++){
+    document.getElementById(seats[seatKeys[i]]+"bb").style.visibility="hidden";
+    document.getElementById(seats[seatKeys[i]]+"bet").style.visibility="hidden";
+    document.getElementById(seats[seatKeys[i]]+"bet").style.innerHTML="";
+  }
+}
+
+function removeAllBets(){
+  seatKeys = Object.keys(seats);
+  for(var i=0; i < seatKeys.length;i++){
+    document.getElementById(seats[seatKeys[i]]+"bet").style.visibility="hidden";
+    document.getElementById(seats[seatKeys[i]]+"bet").style.innerHTML="";
+  }
+}
+
 function displayBacks(playerSeat){
   document.getElementById(playerSeat+'card1').style.backgroundImage= "url('images/cardback.png')";
   document.getElementById(playerSeat+'card2').style.backgroundImage= "url('images/cardback.png')";
 }
 
 function buildCards(hand,playerSeat){
-  buildCard(hand[0],1,playerSeat);
-  buildCard(hand[1],2,playerSeat);
+  buildCard(hand[0],playerSeat+'card1');
+  buildCard(hand[1],playerSeat+'card2');
 }
 
-function buildCard(card,cardN,playerSeat){
+function buildCard(card,location){
   // dynamically build cards
   rank = card[0];
   suit = card[1];
@@ -741,13 +998,8 @@ function buildCard(card,cardN,playerSeat){
       suitUrl = 'images/club.png'
       break;
   }
-
-  console.log(rankUrl);
-  console.log(suitUrl);
-  document.getElementById(playerSeat+'card'+cardN).classList.add('playingCardFace');
-  document.getElementById(playerSeat+'card'+cardN).innerHTML =
-  `<img class="number" src=`+rankUrl+`>
-  <img class="suit" src=`+suitUrl+`>`;
+  document.getElementById(location).classList.add('playingCardFace');
+  document.getElementById(location).innerHTML = `<img class="number" src=`+rankUrl+`> <img class="suit" src=`+suitUrl+`>`;
 
 }
 

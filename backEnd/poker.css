@@ -196,7 +196,7 @@ body{
 
 .center-row {
   justify-content: space-between;
-  margin: 3vw 0;
+  margin: 1vw 0;
   flex-wrap: wrap;
   align-items: center;
 }
@@ -235,12 +235,14 @@ body{
   bottom: 0;
   left: 0;
   visibility: hidden;
+  background-image: url('images/cardback.png');
 }
 .mburn2{
   position: relative;
   bottom: 0;
   left: -84px;
   visibility: hidden;
+  background-image: url('images/cardback.png');
 }
 .mburn3 {
   transform: rotate(15deg);
@@ -248,6 +250,7 @@ body{
   bottom: 0;
   left: -168px;
   visibility: hidden;
+  background-image: url('images/cardback.png');
 }
 .burn-cards {
   display: flex;
@@ -263,12 +266,14 @@ body{
   bottom: 0;
   left: 0;
   visibility: hidden;
+  background-image: url('images/cardback.png');
 }
 .burn2{
   position: relative;
   bottom: 0;
   left: -7vw;
   visibility: hidden;
+  background-image: url('images/cardback.png');
 }
 .burn3 {
   transform: rotate(15deg);
@@ -276,4 +281,10 @@ body{
   bottom: 0;
   left: -14vw;
   visibility: hidden;
+  background-image: url('images/cardback.png');
+}
+
+.boardCol {
+  flex-direction:column;
+  justify-content: center;
 }
