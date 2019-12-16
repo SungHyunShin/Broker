@@ -14,3 +14,4 @@ To Do list:
 - [ ] add BlackJack
 - [ ] add text invites
 - [ ] move things into more functions in server.js
+- [ ] add session affinity https://devcenter.heroku.com/articles/session-affinity
