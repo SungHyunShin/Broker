@@ -8,7 +8,7 @@ Broker is a web-application project for an online poker game. This lets users to
 
 Just start a game and let users hop right in!
 
-This is hosted over at: 
+This is hosted over at: https://broker-poker.herokuapp.com
 
 To Do list:
 - [ ] add BlackJack
