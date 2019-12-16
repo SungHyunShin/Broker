@@ -9,11 +9,11 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 app.set('port', 5000);
-app.use('/backEnd', express.static(__dirname + '/backEnd'));
-app.use('/images/', express.static(__dirname + '/backEnd/images'));
+app.use('/client', express.static(__dirname + '/client'));
+app.use('/images/', express.static(__dirname + '/client/images'));
 // Routing
 app.get('/', function(request, response) {
-  response.sendFile(path.join(__dirname, '/frontEnd/index.html'));
+  response.sendFile(path.join(__dirname, '/client/index.html'));
 });
 // Starts the server.
 server.listen(5000, function() {
