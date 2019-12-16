@@ -778,6 +778,7 @@ io.on('connection', function(socket) {
         console.log("ROUND OVER");
         var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
         clearTimeout(timer);
+        return;
       }
 
       if(currentRound['toAct'].length==0){
