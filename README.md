@@ -10,6 +10,16 @@ Just start a game and let users hop right in!
 
 This is hosted over at: https://broker-poker.herokuapp.com
 
+
+
+
+Npm install required:
+https://github.com/kadamwhite/node-card-deck
+https://www.npmjs.com/package/pokersolver
+https://socket.io
+https://expressjs.com
+
+
 To Do list:
 - [ ] add random gameCode
 - [ ] add BlackJack
@@ -17,3 +27,4 @@ To Do list:
 - [ ] move things into more functions in server.js
 - [ ] add session affinity https://devcenter.heroku.com/articles/session-affinity
 - [ ] fix chip bugs such as going all in and lost chips
+- [ ] fix pot distribution to winners
