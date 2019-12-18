@@ -22,10 +22,10 @@ Npm install required:
 
 
 To Do list:
-- [ ] add random gameCode
+- [x] add random gameCode
 - [ ] add BlackJack
 - [ ] add text invites
 - [ ] move things into more functions in server.js
 - [ ] add session affinity https://devcenter.heroku.com/articles/session-affinity
-- [ ] fix chip bugs such as going all in and lost chips
-- [ ] fix pot distribution to winners
+- [x] fix chip bugs such as going all in and lost chips
+- [x] fix pot distribution to winners
