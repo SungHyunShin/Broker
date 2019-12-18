@@ -33,6 +33,12 @@ socket.on('updateMinRanges',function(data){
   document.getElementById("rangeInput").min = parseInt(data);
   document.getElementById("betInput").min = parseInt(data);
   document.getElementById("minPrice").innterHTML = data;
+  if(parseInt(data)>document.getElementById("rangeInput").max){
+    document.getElementById("rangeInput").max = parseInt(data);
+    document.getElementById("betInput").max = parseInt(data);
+    document.getElementById("maxPrice").innterHTML = data;
+  }
+
 })
 socket.on('displayBoardRiver',function(card){
   displayRiver(card);
@@ -237,20 +243,23 @@ document.getElementById("roomJoin").addEventListener("click",roomJoinFunc);
 document.getElementById("roomCreate").addEventListener("click",roomCreateFunc);
 
 function raiseF(){
-  if(document.getElementById('rangeInput').value>=document.getElementById('rangeInput').min){
-    console.log(document.getElementById('rangeInput').value);
-    socket.emit('playerRaise',document.getElementById('rangeInput').value);
+  if(parseInt(document.getElementById('betInput').innerHTML)>=document.getElementById('rangeInput').min
+    &&parseInt(document.getElementById('betInput').innerHTML)<=document.getElementById('rangeInput').max){
+    socket.emit('playerRaise',parseInt(document.getElementById('betInput').value));
   }
+  else
+    socket.emit('playerRaise',document.getElementById('rangeInput').value);
 }
 function call(){
   socket.emit('playerCall','');
 }
 function bet(){
-  if(document.getElementById('rangeInput').value>=document.getElementById('rangeInput').min){
-    console.log(document.getElementById('rangeInput').value);
-    socket.emit('playerBet',document.getElementById('rangeInput').value);
+  if(parseInt(document.getElementById('betInput').innerHTML)>=document.getElementById('rangeInput').min
+    &&parseInt(document.getElementById('betInput').innerHTML)<=document.getElementById('rangeInput').max){
+    socket.emit('playerBet',parseInt(document.getElementById('betInput').value));
   }
-}
+  else
+    socket.emit('playerBet',document.getElementById('rangeInput').value);}
 function check(){
   socket.emit('playerCheck','');
 }

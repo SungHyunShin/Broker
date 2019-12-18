@@ -21,7 +21,6 @@ server.listen(process.env.PORT || 3000, function() {
 });
 
 var games = {};
-var gameC = 0;
 var idToName = {};
 var nameToId = {};
 
@@ -34,8 +33,9 @@ io.on('connection', function(socket) {
 
     if(playerName.length>12||playerName.length==0||roomSizeLimit<2||roomSizeLimit>8||!(gameType=='T'||gameType=='B')) return;
 
-    gameC += 1;
-    var gameCode = gameC.toString().padStart(5, "0");
+    var gameCode = Math.floor(Math.random() * (99999 - 0 + 1) + 0).toString().padStart(5,"0");
+    while(gameCode in games)
+    gameCode = Math.floor(Math.random() * (99999 - 0 + 1) + 0).toString().padStart(5,"0");
     socket.emit('gameCode',gameCode);
     games[gameCode] = {};
     games[gameCode]['gameType'] = gameType;
@@ -263,6 +263,7 @@ io.on('connection', function(socket) {
             else {
               var amtIn = 0;
             }
+            console.log(currentRound['toAct'][0],amtIn);
             io.to(gameCode).emit('userMessage',currentRound['toAct'][0]+" to act. "+(currentRound['raiseAmt']-amtIn)+" to call.");
           }
           else{
@@ -386,21 +387,21 @@ io.on('connection', function(socket) {
       betAmt = parseInt(betAmt);
       // check betSize
       if(betAmt<games[gameCode]['gameValues']['currentRound']['bigBlindVal']||
-        betAmt>games[gameCode]['gameValues']['players'][playerName]['stackSize'])
-        return;
+      betAmt>games[gameCode]['gameValues']['players'][playerName]['stackSize'])
+      return;
 
       games[gameCode]['gameValues']['currentRound']['raise'] = true;
       games[gameCode]['gameValues']['currentRound']['raiseAmt'] = betAmt;
 
       if(playerName in games[gameCode]['gameValues']['currentRound']['pot'])
-        games[gameCode]['gameValues']['currentRound']['pot'][playerName] += betAmt;
+      games[gameCode]['gameValues']['currentRound']['pot'][playerName] += betAmt;
       else
-        games[gameCode]['gameValues']['currentRound']['pot'][playerName] = betAmt;
+      games[gameCode]['gameValues']['currentRound']['pot'][playerName] = betAmt;
 
       if(playerName in games[gameCode]['gameValues']['currentRound']['roundPot'])
-        games[gameCode]['gameValues']['currentRound']['roundPot'][playerName] += betAmt;
+      games[gameCode]['gameValues']['currentRound']['roundPot'][playerName] += betAmt;
       else
-        games[gameCode]['gameValues']['currentRound']['roundPot'][playerName] = betAmt;
+      games[gameCode]['gameValues']['currentRound']['roundPot'][playerName] = betAmt;
 
       games[gameCode]['gameValues']['players'][playerName]['stackSize'] -= betAmt;
 
@@ -494,10 +495,11 @@ io.on('connection', function(socket) {
             io.to(gameCode).emit('userMessage',games[gameCode]['gameValues']['bb'][0]+" has won! Congratulations! Waiting for host to end game.");
             return;
           }
-          // go to next round
-          //console.log("ROUND OVER");
-          var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
-          return;
+          else{// go to next round
+            //console.log("ROUND OVER");
+            var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
+            return;
+          }
         }
       }
       if(games[gameCode]['gameValues']['currentRound']['toAct'].length==0&&games[gameCode]['gameValues']['currentRound']['playersIn'].length!=0){
@@ -541,10 +543,11 @@ io.on('connection', function(socket) {
             io.to(gameCode).emit('userMessage',games[gameCode]['gameValues']['bb'][0]+" has won! Congratulations! Waiting for host to end game.");
             return;
           }
-          // go to next round
-          //console.log("ROUND OVER");
-          var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
-          return;
+          else{// go to next round
+            //console.log("ROUND OVER");
+            var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
+            return;
+          }
         }
       }
       if(currentRound['toAct'][0]==currentRound['sb']){
@@ -567,6 +570,7 @@ io.on('connection', function(socket) {
         else {
           var amtIn = 0;
         }
+        console.log(currentRound['toAct'][0],amtIn);
         io.to(gameCode).emit('userMessage',currentRound['toAct'][0]+" to act. "+(currentRound['raiseAmt']-amtIn)+" to call.");
       }
       else{
@@ -655,10 +659,11 @@ io.on('connection', function(socket) {
             io.to(gameCode).emit('userMessage',games[gameCode]['gameValues']['bb'][0]+" has won! Congratulations! Waiting for host to end game.");
             return;
           }
-          // go to next round
-          //console.log("ROUND OVER");
-          var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
-          return;
+          else{// go to next round
+            //console.log("ROUND OVER");
+            var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
+            return;
+          }
         }
       }
       if(games[gameCode]['gameValues']['currentRound']['toAct'].length==0&&games[gameCode]['gameValues']['currentRound']['playersIn'].length!=0){
@@ -702,10 +707,11 @@ io.on('connection', function(socket) {
             io.to(gameCode).emit('userMessage',games[gameCode]['gameValues']['bb'][0]+" has won! Congratulations! Waiting for host to end game.");
             return;
           }
-          // go to next round
-          //console.log("ROUND OVER");
-          var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
-          return;
+          else{// go to next round
+            //console.log("ROUND OVER");
+            var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
+            return;
+          }
         }
       }
       if(currentRound['toAct'][0]==currentRound['sb']){
@@ -728,6 +734,7 @@ io.on('connection', function(socket) {
         else {
           var amtIn = 0;
         }
+        console.log(currentRound['toAct'][0],amtIn);
         io.to(gameCode).emit('userMessage',currentRound['toAct'][0]+" to act. "+(currentRound['raiseAmt']-amtIn)+" to call.");
       }
       else{
@@ -768,8 +775,8 @@ io.on('connection', function(socket) {
       if(currentRound['playersIn'].length==1){
         // pot logic
         potLogic(gameCode);
-        if(games[gameCode]['gameValues']['bb'].length <= 1){
-          io.to(gameCode).emit('userMessage',games[gameCode]['gameValues']['playersIn'][0]+" has won! Congratulations! Waiting for host to end game.");
+        if(games[gameCode]['gameValues']['bb'].length == 1){
+          io.to(gameCode).emit('userMessage',games[gameCode]['gameValues']['bb'][0]+" has won! Congratulations! Waiting for host to end game.");
           return;
         }
         // go to next round
@@ -839,10 +846,11 @@ io.on('connection', function(socket) {
             io.to(gameCode).emit('userMessage',games[gameCode]['gameValues']['bb'][0]+" has won! Congratulations! Waiting for host to end game.");
             return;
           }
-          // go to next round
-          //console.log("ROUND OVER");
-          var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
-          return;
+          else{// go to next round
+            //console.log("ROUND OVER");
+            var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
+            return;
+          }
         }
       }
       if(games[gameCode]['gameValues']['currentRound']['toAct'].length==0&&games[gameCode]['gameValues']['currentRound']['playersIn'].length!=0){
@@ -886,10 +894,11 @@ io.on('connection', function(socket) {
             io.to(gameCode).emit('userMessage',games[gameCode]['gameValues']['bb'][0]+" has won! Congratulations! Waiting for host to end game.");
             return;
           }
-          // go to next round
-          //console.log("ROUND OVER");
-          var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
-          return;
+          else{// go to next round
+            //console.log("ROUND OVER");
+            var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
+            return;
+          }
         }
       }
       if(currentRound['toAct'][0]==currentRound['sb']){
@@ -912,6 +921,7 @@ io.on('connection', function(socket) {
         else {
           var amtIn = 0;
         }
+        console.log(currentRound['toAct'][0],amtIn);
         io.to(gameCode).emit('userMessage',currentRound['toAct'][0]+" to act. "+(currentRound['raiseAmt']-amtIn)+" to call.");
       }
       else{
@@ -927,8 +937,8 @@ io.on('connection', function(socket) {
       //console.log(playerName+': playerRaise');
       // check betSize
       if(betAmt<games[gameCode]['gameValues']['currentRound']['raiseAmt']||
-        betAmt>games[gameCode]['gameValues']['players'][playerName]['stackSize'])
-        return;
+      betAmt>games[gameCode]['gameValues']['players'][playerName]['stackSize'])
+      return;
 
       // check if it's their turn and legal move
       if(playerName != games[gameCode]['gameValues']['currentRound']['toAct'][0]){
@@ -937,30 +947,29 @@ io.on('connection', function(socket) {
       betAmt = parseInt(betAmt);
       raiseAmt = betAmt;
       if(playerName in games[gameCode]['gameValues']['currentRound']['roundPot'])
-        raiseAmt += games[gameCode]['gameValues']['currentRound']['raiseAmt'] - games[gameCode]['gameValues']['currentRound']['roundPot'][playerName];
+      raiseAmt += games[gameCode]['gameValues']['currentRound']['raiseAmt'] - games[gameCode]['gameValues']['currentRound']['roundPot'][playerName];
       else{
         raiseAmt += games[gameCode]['gameValues']['currentRound']['raiseAmt'];
       }
+      games[gameCode]['gameValues']['currentRound']['raise'] = true;
+      games[gameCode]['gameValues']['currentRound']['raiseAmt'] += betAmt;
 
       if(raiseAmt>games[gameCode]['gameValues']['players'][playerName]['stackSize']){
         raiseAmt = games[gameCode]['gameValues']['players'][playerName]['stackSize'];
       }
 
-      games[gameCode]['gameValues']['currentRound']['raise'] = true;
-      games[gameCode]['gameValues']['currentRound']['raiseAmt'] += betAmt;
-
       if(playerName in games[gameCode]['gameValues']['currentRound']['pot'])
-        games[gameCode]['gameValues']['currentRound']['pot'][playerName] += raiseAmt;
+      games[gameCode]['gameValues']['currentRound']['pot'][playerName] += raiseAmt;
       else
-        games[gameCode]['gameValues']['currentRound']['pot'][playerName] = games[gameCode]['gameValues']['currentRound']['raiseAmt'];
+      games[gameCode]['gameValues']['currentRound']['pot'][playerName] = raiseAmt;
       if(playerName in games[gameCode]['gameValues']['currentRound']['roundPot']){
-        games[gameCode]['gameValues']['players'][playerName]['stackSize'] -= raiseAmt;
         games[gameCode]['gameValues']['currentRound']['roundPot'][playerName] += raiseAmt;
       }
       else{
-        games[gameCode]['gameValues']['players'][playerName]['stackSize'] -= games[gameCode]['gameValues']['currentRound']['raiseAmt'];
-        games[gameCode]['gameValues']['currentRound']['roundPot'][playerName] = games[gameCode]['gameValues']['currentRound']['raiseAmt'];
+        games[gameCode]['gameValues']['currentRound']['roundPot'][playerName] = raiseAmt;
       }
+
+      games[gameCode]['gameValues']['players'][playerName]['stackSize'] -= raiseAmt;
 
       if(games[gameCode]['gameValues']['players'][playerName]['stackSize']==0){
         games[gameCode]['gameValues']['currentRound']['allIn'][playerName]=games[gameCode]['gameValues']['currentRound']['pot'][playerName];
@@ -1053,10 +1062,11 @@ io.on('connection', function(socket) {
             io.to(gameCode).emit('userMessage',games[gameCode]['gameValues']['bb'][0]+" has won! Congratulations! Waiting for host to end game.");
             return;
           }
-          // go to next round
-          //console.log("ROUND OVER");
-          var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
-          return;
+          else{// go to next round
+            //console.log("ROUND OVER");
+            var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
+            return;
+          }
         }
       }
       if(games[gameCode]['gameValues']['currentRound']['toAct'].length==0&&games[gameCode]['gameValues']['currentRound']['playersIn'].length!=0){
@@ -1100,10 +1110,11 @@ io.on('connection', function(socket) {
             io.to(gameCode).emit('userMessage',games[gameCode]['gameValues']['bb'][0]+" has won! Congratulations! Waiting for host to end game.");
             return;
           }
-          // go to next round
-          //console.log("ROUND OVER");
-          var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
-          return;
+          else{// go to next round
+            //console.log("ROUND OVER");
+            var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
+            return;
+          }
         }
       }
       if(currentRound['toAct'][0]==currentRound['sb']){
@@ -1126,6 +1137,7 @@ io.on('connection', function(socket) {
         else {
           var amtIn = 0;
         }
+        console.log(currentRound['toAct'][0],amtIn);
         io.to(gameCode).emit('userMessage',currentRound['toAct'][0]+" to act. "+(currentRound['raiseAmt']-amtIn)+" to call.");
       }
       else{
@@ -1146,7 +1158,7 @@ io.on('connection', function(socket) {
       }
       var callAmt = games[gameCode]['gameValues']['currentRound']['raiseAmt'];
       if(playerName in games[gameCode]['gameValues']['currentRound']['roundPot'])
-        callAmt -= games[gameCode]['gameValues']['currentRound']['roundPot'][playerName];
+      callAmt -= games[gameCode]['gameValues']['currentRound']['roundPot'][playerName];
       if(games[gameCode]['gameValues']['players'][playerName]['stackSize']<=callAmt){
         callAmt = games[gameCode]['gameValues']['players'][playerName]['stackSize'];
         if(playerName in games[gameCode]['gameValues']['currentRound']['pot']){
@@ -1252,10 +1264,11 @@ io.on('connection', function(socket) {
             io.to(gameCode).emit('userMessage',games[gameCode]['gameValues']['bb'][0]+" has won! Congratulations! Waiting for host to end game.");
             return;
           }
-          // go to next round
-          //console.log("ROUND OVER");
-          var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
-          return;
+          else{// go to next round
+            //console.log("ROUND OVER");
+            var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
+            return;
+          }
         }
       }
       if(games[gameCode]['gameValues']['currentRound']['toAct'].length==0&&games[gameCode]['gameValues']['currentRound']['playersIn'].length!=0){
@@ -1302,10 +1315,11 @@ io.on('connection', function(socket) {
             io.to(gameCode).emit('userMessage',games[gameCode]['gameValues']['bb'][0]+" has won! Congratulations! Waiting for host to end game.");
             return;
           }
-          // go to next round
-          //console.log("ROUND OVER");
-          var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
-          return;
+          else{// go to next round
+            //console.log("ROUND OVER");
+            var timer = setTimeout(function(){startNewRound(gameCode,false)},5000);
+            return;
+          }
         }
       }
       if(currentRound['toAct'][0]==currentRound['sb']){
@@ -1328,6 +1342,7 @@ io.on('connection', function(socket) {
         else {
           var amtIn = 0;
         }
+        console.log(currentRound['toAct'][0],amtIn);
         io.to(gameCode).emit('userMessage',currentRound['toAct'][0]+" to act. "+(currentRound['raiseAmt']-amtIn)+" to call.");
       }
       else{
@@ -1368,101 +1383,75 @@ io.on('connection', function(socket) {
 
   function potLogic(gameCode){
     if(!(gameCode in games)) return;
-    needWinner = true;
-    givePrizes = {}
-    playersInHands = {};
-    playersWithHands = Object.keys(games[gameCode]['gameValues']['currentRound']['hands']);
-    for(var i = 0;i<playersWithHands.length;i++){
-      if(games[gameCode]['gameValues']['currentRound']['playersIn'].includes(playersWithHands[i]))
-      playersInHands[playersWithHands[i]]=games[gameCode]['gameValues']['currentRound']['hands'][playersWithHands[i]];
-    };
-    while(needWinner){
-      winners = calcPot(playersInHands,games[gameCode]['gameValues']['currentRound']['board'],games[gameCode]['gameValues']['currentRound']['totalPot']);
-      for(var i = 0; i<winners.length;i++){
-        givePrizes[winners[i]['name']] = games[gameCode]['gameValues']['currentRound']['pot'][winners[i]['name']];
-        if(winners[i]['name'] in games[gameCode]['gameValues']['currentRound']['allIn']){
-          delete playersInHands[winners[i]['name']];
-        }
-        else{
-          needWinner = false;
-        }
-      }
-      if(Object.keys(playersInHands).length==0){
-        needWinner = false;
-      }
-    }
+    var currentRound = games[gameCode]['gameValues']['currentRound'];
 
-
-    var sortablePZ = [];
-    prizeWinners = Object.keys(givePrizes);
-    for (var i=0;i<prizeWinners.length;i++) {
-      sortablePZ.push([prizeWinners[i], givePrizes[prizeWinners[i]]]);
-    }
-    sortablePZ.sort(function(a, b) {
-      return a[1] - b[1];
-    });
-    pot = games[gameCode]['gameValues']['currentRound']['pot'];
-    var sortablePC = [];
-    potKeys = Object.keys(pot);
-    for (var i=0;i<potKeys.length;i++){
-      sortablePC.push([potKeys[i], pot[potKeys[i]]]);
-    }
-    sortablePC.sort(function(a, b) {
-      return a[1] - b[1];
-    });
-
-
-    for(var i = 0;i<sortablePZ.length-1;i++){
-      if(sortablePZ[i][1]==sortablePZ[i+1][1]){
-        sortablePZ[i].push(true);
-      }
-      else{
-        sortablePZ[i].push(false);
-      }
-    }
-
-    sortablePZ[sortablePZ.length-1].push(false);
+    console.log(currentRound);
     message = "";
-    for(var i = 0;i<sortablePZ.length;i++){
-      var winnings = 0;
-      var newSortablePC = sortablePC.slice(0);
-      for(var j = 0;j<sortablePC.length;j++){
-        winnings += sortablePC[j][1];
-        newSortablePC.shift();
-        if((sortablePC[j][0]==sortablePZ[i][0])&&(i!=sortablePZ.length-1)){
-          break;
+    while(currentRound['totalPot']>0){
+      console.log(currentRound);
+      var playerHands = {};
+      var players = Object.keys(currentRound['hands']);
+      for(var i = 0;i<players.length;i++){
+        if(currentRound['playersIn'].includes(players[i]))
+        playerHands[players[i]]=currentRound['hands'][players[i]];
+      };
+
+      winners = calcPot(playerHands,games[gameCode]['gameValues']['currentRound']['board'],games[gameCode]['gameValues']['currentRound']['totalPot']);
+      if(currentRound['playersIn'].length>1){
+        winAward = [];
+        for(var i = 0; i <winners.length; i++){
+          winAward.push([winners[i]['name'],currentRound['pot'][winners[i]['name']]])
         }
-      }
-      sortablePC = newSortablePC.slice(0);
-      if(sortablePZ[i][2]){
-        var j = i;
-        var tieCount = 1;
-        while(sortablePZ[j][2]){
-          j++;
-          tieCount++;
+
+        winAward.sort(sortFunction);
+
+        for(var j = 0; j < winAward.length; j++){
+          var toDelete = [];
+          var potPlayers = Object.keys(currentRound['pot']);
+          var winnings = 0;
+          for(var i = 0; i < potPlayers.length; i++){
+            if(currentRound['pot'][potPlayers[i]]<= winAward[j][1]){
+              toDelete.push(potPlayers[i]);
+              winnings += currentRound['pot'][potPlayers[i]];
+              currentRound['pot'][potPlayers[i]] = 0;
+            }
+            else{
+              currentRound['pot'][potPlayers[i]]-=winAward[j][1];
+              winnings += winAward[j][1];
+            }
+          }
+          // awards winnings
+          games[gameCode]['gameValues']['players'][winAward[j][0]]['stackSize'] += winnings;
+          message += winAward[j][0]+" has won "+winnings+". "
+          currentRound['totalPot']-=winnings;
+          // delete the players in toDelete from pot
+          for(var i = 0; i < toDelete.length; i++){
+            delete currentRound['pot'][toDelete[i]];
+          }
         }
-        while(i<j){
-          //console.log(sortablePZ[i][0]+" HAS WON "+winnings+". ");
-          message += sortablePZ[i][0]+" had won "+winnings+". "
-          games[gameCode]['gameValues']['players'][sortablePZ[i++][0]]['stackSize'] += winnings/tieCount;
+
+        // delete players in winAwards in hands
+        for(var j = 0; j < winAward.length; j++){
+          delete currentRound['hands'][winAward[j][0]];
         }
-        i--;
       }
       else{
-        //console.log(sortablePZ[i][0]+" HAS WON "+winnings+". ");
-        message += sortablePZ[i][0]+" had won "+winnings+". "
-        games[gameCode]['gameValues']['players'][sortablePZ[i][0]]['stackSize'] += winnings;
+        message += winners[0]['name']+" has won "+currentRound['totalPot']+". ";
+        games[gameCode]['gameValues']['players'][winners[0]['name']]['stackSize'] += currentRound['totalPot'];
+        currentRound['totalPot'] = 0;
       }
     }
     io.to(gameCode).emit('displayWinner',message);
-    var players = Object.keys(games[gameCode]['gameValues']['players']);
-    for(var i = 0; i < players.length;i++){
-      if(games[gameCode]['gameValues']['players'][players[i]]['stackSize']==0)
-      games[gameCode]['gameValues']['bb'].splice(games[gameCode]['gameValues']['bb'].indexOf(players[i]),1);
+
+    var playersIn = Object.keys(games[gameCode]['gameValues']['players']);
+    for(var i = 0; i < playersIn.length;i++){
+      if(games[gameCode]['gameValues']['players'][playersIn[i]]['stackSize']==0)
+      games[gameCode]['gameValues']['bb'].splice(games[gameCode]['gameValues']['bb'].indexOf(playersIn[i]),1);
     }
   }
 
   function createNewRound(gameCode,smallBlind,bigBlind){
+    console.log(games[gameCode]['gameValues']);
     if(games[gameCode]['gameValues']['gameSettings']['blindIncrease'])
     if(games[gameCode]['gameValues']['roundsPlayed']==games[gameCode]['gameValues']['gameSettings']['roundsToIncBigBlind'])
     games[gameCode]['gameValues']['gameSettings']['blindSize'] = 2* games[gameCode]['gameValues']['gameSettings']['blindSize'];
@@ -1514,13 +1503,13 @@ io.on('connection', function(socket) {
     }
     currentRound['toAct'] = currentRound['playersIn'].slice(0);
     if(smallBlind in currentRound['allIn'])
-      currentRound['toAct'].shift();
+    currentRound['toAct'].shift();
     else
-      currentRound['toAct'].push(currentRound['toAct'].shift()); // move bigblind to end of list
+    currentRound['toAct'].push(currentRound['toAct'].shift()); // move bigblind to end of list
     if(bigBlind in currentRound['allIn'])
-      currentRound['toAct'].shift();
+    currentRound['toAct'].shift();
     else
-      currentRound['toAct'].push(currentRound['toAct'].shift()); // move smallblind to end of list
+    currentRound['toAct'].push(currentRound['toAct'].shift()); // move smallblind to end of list
     currentRound['raise'] = false;
     currentRound['raiseAmt'] = currentRound['bigBlindVal'];
     return currentRound;
@@ -1587,3 +1576,12 @@ io.on('connection', function(socket) {
     io.on('message', function(data){
       console.log(data);
     });
+
+    function sortFunction(a, b) {
+      if (a[1] === b[1]) {
+        return 0;
+      }
+      else {
+        return (a[1] < b[1]) ? -1 : 1;
+      }
+    }
