@@ -14,10 +14,11 @@ This is hosted over at: https://broker-poker.herokuapp.com
 
 
 Npm install required:
-https://github.com/kadamwhite/node-card-deck
-https://www.npmjs.com/package/pokersolver
-https://socket.io
-https://expressjs.com
+
+- https://github.com/kadamwhite/node-card-deck
+- https://www.npmjs.com/package/pokersolver
+- https://socket.io
+- https://expressjs.com
 
 
 To Do list:
