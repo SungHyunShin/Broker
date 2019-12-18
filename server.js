@@ -316,7 +316,6 @@ io.on('connection', function(socket) {
     }
   });
   socket.on('startGame', function(){
-    // TODO add settings checking and processing
     if(socket.id in idToName){
 
       var playerName = idToName[socket.id]['playerName'];
@@ -1514,7 +1513,7 @@ io.on('connection', function(socket) {
     currentRound['raiseAmt'] = currentRound['bigBlindVal'];
     return currentRound;
   }
-
+  
   function dealCards(currentRound,playerStack){
     for(i=0; i<currentRound['playersIn'].length;i++){
       io.to(nameToId[currentRound['playersIn'][i]]).emit(
@@ -1523,7 +1522,7 @@ io.on('connection', function(socket) {
       }
     }
 
-    function calcPot(listOfHands, board, pot) {
+  function calcPot(listOfHands, board, pot) {
       //Object.values returns values of dictionary
       //grab hands and names
       justHands = Object.values(listOfHands);
@@ -1567,21 +1566,19 @@ io.on('connection', function(socket) {
           winnerDict.push(newdict);
         }
         return winnerDict;
-      }
-
-    });
+    }
 
 
     // function to log messages sent to server
-    io.on('message', function(data){
-      console.log(data);
-    });
+  io.on('message', function(data){
+    console.log(data);
+  });
 
-    function sortFunction(a, b) {
-      if (a[1] === b[1]) {
-        return 0;
-      }
-      else {
-        return (a[1] < b[1]) ? -1 : 1;
-      }
+  function sortFunction(a, b) {
+    if (a[1] === b[1]) {
+      return 0;
     }
+    else {
+      return (a[1] < b[1]) ? -1 : 1;
+    }
+  }
