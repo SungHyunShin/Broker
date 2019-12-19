@@ -29,3 +29,6 @@ To Do list:
 - [ ] add session affinity https://devcenter.heroku.com/articles/session-affinity
 - [x] fix chip bugs such as going all in and lost chips
 - [x] fix pot distribution to winners
+- [ ] fix multiplayer (3+) where if one person loses all chips, next round wins the game
+- [ ] fix big blind raise losing big blind
+- [ ] redo lots of poker logic
