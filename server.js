@@ -1513,7 +1513,7 @@ io.on('connection', function(socket) {
     currentRound['raiseAmt'] = currentRound['bigBlindVal'];
     return currentRound;
   }
-  
+
   function dealCards(currentRound,playerStack){
     for(i=0; i<currentRound['playersIn'].length;i++){
       io.to(nameToId[currentRound['playersIn'][i]]).emit(
@@ -1567,6 +1567,7 @@ io.on('connection', function(socket) {
         }
         return winnerDict;
     }
+  });
 
 
     // function to log messages sent to server
