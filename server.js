@@ -26,7 +26,7 @@ var nameToId = {};
 
 // Add the WebSocket handlers
 io.on('connection', function(socket) {
-  socket.on('roomInit', function(roomInitValues){
+  /*socket.on('roomInit', function(roomInitValues){
     var playerName = roomInitValues['playerName'];
     var roomSizeLimit = roomInitValues['roomSizeLimit'];
     var gameType = roomInitValues['gameType'];
@@ -1567,7 +1567,7 @@ io.on('connection', function(socket) {
         }
         return winnerDict;
     }
-  });
+  */});
 
 
     // function to log messages sent to server
